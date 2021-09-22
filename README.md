@@ -1,22 +1,12 @@
-**⚠ This project has been archived in favor of using the plugin below. See the thread for more details: https://groups.google.com/g/quarkus-dev/c/7D-mXOw-xc0/m/xFr0mb3OAQAJ ⚠**
+# Quarkus - Kerberos
 
-# Welcome to Quarkiverse!
+## Welcome to Quarkiverse!
 
 Congratulations and thank you for creating a new Quarkus extension project in Quarkiverse!
 
 Feel free to replace this content with the proper description of your new project and necessary instructions how to use and contribute to it.
 
 You can find the basic info, Quarkiverse policies and conventions in [the Quarkiverse wiki](https://github.com/quarkiverse/quarkiverse/wiki).
-
-Need to quickly create a new Quarkus extension Maven project? Just execute the command below replacing the template values with your preferred ones:
-```
-mvn io.quarkus:quarkus-maven-plugin:<QUARKUS_VERSION>:create-extension -N \
-    -DgroupId=io.quarkiverse.<REPO_NAME> \ 
-    -DartifactId=<EXTENSION_ARTIFACT_ID> \  
-    -Dversion=<INITIAL_VERSION> \ 
-    -Dquarkus.nameBase="<EXTENSION_SIMPLE_NAME>"
-```
-**IMPORTANT:** make sure your project uses [io.quarkiverse:quarkiverse-parent](https://github.com/quarkiverse/quarkiverse-parent) as the parent POM. It will make sure the release and artifact publishing plugins are properly configured for your project.
 
 In case you are creating a Quarkus extension project for the first time, please follow [Building My First Extension](https://quarkus.io/guides/building-my-first-extension) guide.
 
@@ -30,4 +20,4 @@ The documentation for this extension should be maintained as part of this reposi
 
 The layout should follow the [Antora's Standard File and Directory Set](https://docs.antora.org/antora/2.3/standard-directories/).
 
-Once the docs are ready to be published, please open a PR including this repository in the [Quarkiverse Docs Antora playbook](https://github.com/quarkiverse/quarkiverse-docs/blob/master/antora-playbook.yml#L7). See an example [here](https://github.com/quarkiverse/quarkiverse-docs/pull/1).
+Once the docs are ready to be published, please open a PR including this repository in the [Quarkiverse Docs Antora playbook](https://github.com/quarkiverse/quarkiverse-docs/blob/main/antora-playbook.yml#L7). See an example [here](https://github.com/quarkiverse/quarkiverse-docs/pull/1).

@@ -1,0 +1,5 @@
+name: quarkus-your-project
+title: Quarkus <YOUR_PROJECT>
+version: dev
+nav:
+  - modules/ROOT/nav.adoc

@@ -2,6 +2,7 @@ package io.quarkiverse.kerberos.runtime;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -38,15 +39,18 @@ public class KerberosAuthenticationMechanism implements HttpAuthenticationMechan
         String negotiateToken = extractNegotiateToken(context);
         if (negotiateToken != null) {
             return identityProviderManager.authenticate(HttpSecurityUtils.setRoutingContextAttribute(
-                    new NegotiateAuthenticationRequest(negotiateToken), context)).map(s -> {
-                        if (context.get(NEGOTIATE_DATA) != null) {
-                            context.response().headers().add(HttpHeaderNames.WWW_AUTHENTICATE,
-                                    NEGOTIATE_SCHEME + " " + context.get(NEGOTIATE_DATA));
+                    new NegotiateAuthenticationRequest(negotiateToken), context))
+                    .onItem().transform(new Function<SecurityIdentity, SecurityIdentity>() {
+                        @Override
+                        public SecurityIdentity apply(SecurityIdentity identity) {
+                            if (context.get(NEGOTIATE_DATA) != null) {
+                                context.response().headers().add(HttpHeaderNames.WWW_AUTHENTICATE,
+                                        NEGOTIATE_SCHEME + " " + context.get(NEGOTIATE_DATA));
+                            }
+                            return identity;
                         }
-                        return s;
                     });
         }
-
         return Uni.createFrom().nullItem();
     }
 
@@ -84,7 +88,7 @@ public class KerberosAuthenticationMechanism implements HttpAuthenticationMechan
         int idx = headerValue.indexOf(' ');
         final String scheme = idx > 0 ? headerValue.substring(0, idx) : null;
 
-        if (scheme == null || !NEGOTIATE_SCHEME.equals(scheme)) {
+        if (!NEGOTIATE_SCHEME.equals(scheme)) {
             return null;
         }
 

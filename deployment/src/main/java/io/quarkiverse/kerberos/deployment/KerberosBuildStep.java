@@ -1,5 +1,7 @@
 package io.quarkiverse.kerberos.deployment;
 
+import java.util.function.BooleanSupplier;
+
 import com.sun.security.auth.module.Krb5LoginModule;
 
 import io.quarkiverse.kerberos.runtime.KerberosAuthenticationMechanism;
@@ -16,12 +18,12 @@ import io.quarkus.deployment.pkg.PackageConfig;
 
 public class KerberosBuildStep {
 
-    @BuildStep
+    @BuildStep(onlyIf = IsEnabled.class)
     public FeatureBuildItem featureBuildItem() {
         return new FeatureBuildItem("kerberos");
     }
 
-    @BuildStep
+    @BuildStep(onlyIf = IsEnabled.class)
     public AdditionalBeanBuildItem additionalBeans() {
         AdditionalBeanBuildItem.Builder builder = AdditionalBeanBuildItem.builder().setUnremovable()
                 .addBeanClass(KerberosAuthenticationMechanism.class)
@@ -29,7 +31,7 @@ public class KerberosBuildStep {
         return builder.build();
     }
 
-    @BuildStep
+    @BuildStep(onlyIf = IsEnabled.class)
     public ReflectiveClassBuildItem reflection() {
         return ReflectiveClassBuildItem
                 .builder(Krb5LoginModule.class.getName(), "sun.security.jgss.krb5.Krb5MechFactory",
@@ -39,21 +41,29 @@ public class KerberosBuildStep {
                 .build();
     }
 
-    @BuildStep
+    @BuildStep(onlyIf = IsEnabled.class)
     ReflectiveClassBuildItem gssManager() {
         return ReflectiveClassBuildItem.builder("sun.security.jgss.GSSContextImpl").fields(true).build();
     }
 
-    @BuildStep
+    @BuildStep(onlyIf = IsEnabled.class)
     public NativeImageResourceBundleBuildItem resourceBundleBuildItem() {
         return new NativeImageResourceBundleBuildItem("sun.security.util.AuthResources");
     }
 
-    @BuildStep
+    @BuildStep(onlyIf = IsEnabled.class)
     @Record(ExecutionTime.RUNTIME_INIT)
     public void register2(KerberosRecorder rec, PackageConfig packageConfig) throws Exception {
         if (packageConfig.type.equals(PackageConfig.NATIVE)) {
             rec.registerProviderForNative();
+        }
+    }
+
+    public static class IsEnabled implements BooleanSupplier {
+        KerberosBuildTimeConfig config;
+
+        public boolean getAsBoolean() {
+            return config.enabled;
         }
     }
 }

@@ -150,13 +150,13 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
                     }
                 } catch (LoginException ex) {
                     LOG.debugf("Login exception: %s", ex.getMessage());
-                    throw new RuntimeException(ex);
+                    throw new AuthenticationCompletionException(ex);
                 } catch (GSSException ex) {
                     LOG.debugf("GSS exception: %s", ex.getMessage());
-                    throw new AuthenticationFailedException(ex);
+                    throw new AuthenticationCompletionException(ex);
                 } catch (PrivilegedActionException ex) {
                     LOG.debugf("PrivilegedAction exception: %s", ex.getMessage());
-                    throw new RuntimeException(ex);
+                    throw new AuthenticationCompletionException(ex);
                 }
             }
 
@@ -190,7 +190,7 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
 
         GSSManager gssManager = GSSManager.getInstance();
         if (gssManager == null) {
-            throw new IllegalStateException("GSSManager was null");
+            throw new AuthenticationCompletionException("GSSManager was null");
         }
 
         GSSName gssService = gssManager.createName(completeServicePrincipalName, null);

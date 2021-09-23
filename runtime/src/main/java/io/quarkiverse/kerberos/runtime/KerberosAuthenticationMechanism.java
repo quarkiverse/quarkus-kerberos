@@ -67,8 +67,6 @@ public class KerberosAuthenticationMechanism implements HttpAuthenticationMechan
 
     @Override
     public Set<Class<? extends AuthenticationRequest>> getCredentialTypes() {
-        // The service ticket can be viewed as an Spnego token.
-        // TODO: However it will be easier to deal with a Negotiate specific request object.
         return Collections.singleton(NegotiateAuthenticationRequest.class);
     }
 
@@ -88,7 +86,7 @@ public class KerberosAuthenticationMechanism implements HttpAuthenticationMechan
         int idx = headerValue.indexOf(' ');
         final String scheme = idx > 0 ? headerValue.substring(0, idx) : null;
 
-        if (!NEGOTIATE_SCHEME.equals(scheme)) {
+        if (!NEGOTIATE_SCHEME.equalsIgnoreCase(scheme)) {
             return null;
         }
 

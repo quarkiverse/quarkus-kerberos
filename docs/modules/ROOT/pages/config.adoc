@@ -6,107 +6,70 @@ icon:lock[title=Fixed at build time] Configuration property fixed at build time 
 [.configuration-reference.searchable, cols="80,.^10,.^10"]
 |===
 
-h|[[quarkus-freemarker_configuration]]link:#quarkus-freemarker_configuration[Configuration property]
+h|[[quarkus-kerberos_configuration]]link:#quarkus-kerberos_configuration[Configuration property]
 
 h|Type
 h|Default
 
-a|icon:lock[title=Fixed at build time] [[quarkus-freemarker_quarkus.freemarker.resource-paths]]`link:#quarkus-freemarker_quarkus.freemarker.resource-paths[quarkus.freemarker.resource-paths]`
+a|icon:lock[title=Fixed at build time] [[quarkus-kerberos_quarkus.kerberos.enabled]]`link:#quarkus-kerberos_quarkus.kerberos.enabled[quarkus.kerberos.enabled]`
 
 [.description]
 --
-Comma-separated list of absolute resource paths to scan recursively for templates. All tree folder from 'resource-paths' will be added as a resource. Unprefixed locations or locations starting with classpath will be processed in the same way.
---|list of string
-|`freemarker/templates`
+Determine if the Kerberos extension is enabled
+--|boolean
+|`true`
 
 
-a| [[quarkus-freemarker_quarkus.freemarker.file-paths]]`link:#quarkus-freemarker_quarkus.freemarker.file-paths[quarkus.freemarker.file-paths]`
-
-[.description]
---
-Comma-separated of file system paths where freemarker templates are located
---|list of string
-|
-
-
-a| [[quarkus-freemarker_quarkus.freemarker.default-encoding]]`link:#quarkus-freemarker_quarkus.freemarker.default-encoding[quarkus.freemarker.default-encoding]`
+a| [[quarkus-kerberos_quarkus.kerberos.login-context-name]]`link:#quarkus-kerberos_quarkus.kerberos.login-context-name[quarkus.kerberos.login-context-name]`
 
 [.description]
 --
-Set the preferred charset template files are stored in.
+JAAS Login context name. If the context name is "KDC" (default) then the JAAS configuration will be created automatically otherwise a JAAS configuration file must be available and contain an entry matching its value - in this case use 'java.security.auth.login.config' system property pointing to this file.
+--|string
+|`KDC`
+
+
+a| [[quarkus-kerberos_quarkus.kerberos.debug]]`link:#quarkus-kerberos_quarkus.kerberos.debug[quarkus.kerberos.debug]`
+
+[.description]
+--
+Specifies if a JAAS configuration 'debug' property should be enabled. This property is only effective when `loginContextName` is set to `KDC` and the JAAS configuration is created automatically.
+--|boolean
+|`false`
+
+
+a| [[quarkus-kerberos_quarkus.kerberos.keytab-path]]`link:#quarkus-kerberos_quarkus.kerberos.keytab-path[quarkus.kerberos.keytab-path]`
+
+[.description]
+--
+Service principal keytab file path which will be used to set a JAAS configuration 'keyTab' property. This property is only effective when `loginContextName` is set to `KDC` and the JAAS configuration is created automatically.
 --|string
 |
 
 
-a| [[quarkus-freemarker_quarkus.freemarker.template-exception-handler]]`link:#quarkus-freemarker_quarkus.freemarker.template-exception-handler[quarkus.freemarker.template-exception-handler]`
+a| [[quarkus-kerberos_quarkus.kerberos.use-spnego-oid]]`link:#quarkus-kerberos_quarkus.kerberos.use-spnego-oid[quarkus.kerberos.use-spnego-oid]`
 
 [.description]
 --
-Sets how errors will appear. rethrow, debug, html-debug, ignore.
+Specifies if an `Spnego` authentication mechanism object identifier (`OID`) should be used for creating a `GSSContext`. A `Kerberos` `OID` will be used if this property is set to `false`.
+--|boolean
+|`true`
+
+
+a| [[quarkus-kerberos_quarkus.kerberos.service-principal-name]]`link:#quarkus-kerberos_quarkus.kerberos.service-principal-name[quarkus.kerberos.service-principal-name]`
+
+[.description]
+--
+Kerberos Service Principal Name. If this property is not set then the service principal name will be calculated by concatenating "HTTP/" and the HTTP Host header value, for example: "HTTP/localhost".
 --|string
 |
 
-
-a| [[quarkus-freemarker_quarkus.freemarker.log-template-exceptions]]`link:#quarkus-freemarker_quarkus.freemarker.log-template-exceptions[quarkus.freemarker.log-template-exceptions]`
-
-[.description]
---
-If false, don't log exceptions inside FreeMarker that it will be thrown at you anyway.
---|boolean
-|
-
-
-a| [[quarkus-freemarker_quarkus.freemarker.wrap-unchecked-exceptions]]`link:#quarkus-freemarker_quarkus.freemarker.wrap-unchecked-exceptions[quarkus.freemarker.wrap-unchecked-exceptions]`
+a| [[quarkus-kerberos_quarkus.kerberos.service-principal-realm]]`link:#quarkus-kerberos_quarkus.kerberos.service-principal-realm[quarkus.kerberos.service-principal-realm]`
 
 [.description]
 --
-Wrap unchecked exceptions thrown during template processing into TemplateException-s.
---|boolean
-|
-
-
-a| [[quarkus-freemarker_quarkus.freemarker.fallback-on-null-loop-variable]]`link:#quarkus-freemarker_quarkus.freemarker.fallback-on-null-loop-variable[quarkus.freemarker.fallback-on-null-loop-variable]`
-
-[.description]
---
-If false, do not fall back to higher scopes when reading a null loop variable.
---|boolean
-|
-
-
-a| [[quarkus-freemarker_quarkus.freemarker.boolean-format]]`link:#quarkus-freemarker_quarkus.freemarker.boolean-format[quarkus.freemarker.boolean-format]`
-
-[.description]
---
-The string value for the boolean `true` and `false` values, usually intended for human consumption (not for a computer language), separated with comma.
+Kerberos Service Principal Realm Name. If this property is set then it will be added to the service principal name, for example, `HTTP/localhost@SERVICE-REALM.COM`. Setting the realm property is not required if it matches a default realm set in the Kerberos Distribution Center (KDC) configuration.
 --|string
-|
-
-
-a| [[quarkus-freemarker_quarkus.freemarker.number-format]]`link:#quarkus-freemarker_quarkus.freemarker.number-format[quarkus.freemarker.number-format]`
-
-[.description]
---
-Sets the default number format used to convert numbers to strings.
---|string
-|
-
-
-a| [[quarkus-freemarker_quarkus.freemarker.object-wrapper-expose-fields]]`link:#quarkus-freemarker_quarkus.freemarker.object-wrapper-expose-fields[quarkus.freemarker.object-wrapper-expose-fields]`
-
-[.description]
---
-If true, the object wrapper will be configured to expose fields.
---|boolean
-|
-
-
-a|icon:lock[title=Fixed at build time] [[quarkus-freemarker_quarkus.freemarker.directive-directive]]`link:#quarkus-freemarker_quarkus.freemarker.directive-directive[quarkus.freemarker.directive]`
-
-[.description]
---
-List of directives to register with format name=classname
---|`Map<String,String>`
 |
 
 |===

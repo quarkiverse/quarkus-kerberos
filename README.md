@@ -2,14 +2,14 @@
 
 _Add Kerberos authentication support to Quarkus for HTTP requests_
 
-This project extends Quarkus HTTP security and adds support for Kerberos. 
-It supports the _negotiate_ authentication request flow.
+This project extends Quarkus HTTP security and adds support for link:https://www.kerberos.org/software/tutorial.html[Kerberos]. 
+It supports the link:https://datatracker.ietf.org/doc/html/rfc4559[Negotiate] authentication request flow.
 
+To get started, add the dependency:
 
-## Documentation (To be written)
+<dependency>
+    <groupId>io.quarkiverse.kerberos</groupId>
+    <artifactId>quarkus-kerberos</artifactId>
+</dependency>
 
-The documentation for this extension should be maintained as part of this repository and it is stored in the `docs/` directory. 
-
-The layout should follow the [Antora's Standard File and Directory Set](https://docs.antora.org/antora/2.3/standard-directories/).
-
-Once the docs are ready to be published, please open a PR including this repository in the [Quarkiverse Docs Antora playbook](https://github.com/quarkiverse/quarkiverse-docs/blob/main/antora-playbook.yml#L7). See an example [here](https://github.com/quarkiverse/quarkiverse-docs/pull/1).
+For more details, check the complete link:https://quarkiverse.github.io/quarkiverse-docs/quarkus-quarkiverse/dev/index.html[documentation].

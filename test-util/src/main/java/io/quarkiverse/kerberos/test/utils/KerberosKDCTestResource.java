@@ -24,8 +24,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -64,15 +62,17 @@ import org.apache.directory.server.protocol.shared.transport.TcpTransport;
 import org.apache.directory.server.protocol.shared.transport.Transport;
 import org.apache.directory.server.protocol.shared.transport.UdpTransport;
 
+import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
+
 /**
  * Utility class to start up a test KDC backed by a directory server.
- *
+ * <p>
  * It is better to start the server once instead of once per test but once running
  * the overhead is minimal.
- *
+ * <p>
  * for an extension.
  */
-public class KerberosKDCUtil {
+public class KerberosKDCTestResource implements QuarkusTestResourceLifecycleManager {
 
     private static final boolean IS_IBM = System.getProperty("java.vendor").contains("IBM");
 
@@ -93,18 +93,6 @@ public class KerberosKDCUtil {
      * KDC Related
      */
     private static KdcServer kdcServer;
-
-    public static boolean startServer() throws Exception {
-        if (initialised) {
-            return false;
-        }
-        setupEnvironment();
-        startLdapServer();
-        startKDC();
-
-        initialised = true;
-        return true;
-    }
 
     private static void startLdapServer() throws Exception {
         createWorkingDir();
@@ -143,7 +131,7 @@ public class KerberosKDCUtil {
 
     private static void processLdif(final SchemaManager schemaManager, final CoreSession adminSession, final String ldifName,
             final Map<String, String> mappings) throws Exception {
-        InputStream resourceInput = KerberosKDCUtil.class.getClassLoader().getResourceAsStream(ldifName);
+        InputStream resourceInput = KerberosKDCTestResource.class.getClassLoader().getResourceAsStream(ldifName);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(resourceInput.available());
         int current;
         while ((current = resourceInput.read()) != -1) {
@@ -201,19 +189,22 @@ public class KerberosKDCUtil {
         kdcServer.start();
     }
 
-    private static void setupEnvironment() {
-        final URL configPath = KerberosKDCUtil.class.getClassLoader().getResource("krb5.conf");
+    private static Map<String, String> setupEnvironment() {
         try {
-            System.setProperty("java.security.krb5.conf",
-                    Paths.get(configPath.toURI()).normalize().toAbsolutePath().toString());
-        } catch (URISyntaxException e) {
+            final byte[] configFile = KerberosKDCTestResource.class.getClassLoader().getResourceAsStream("krb5.conf")
+                    .readAllBytes();
+            Path tmp = Files.createTempFile("quarkus-krb", ".conf");
+            Files.write(tmp, configFile);
+            System.setProperty("java.security.krb5.conf", tmp.toAbsolutePath().toString());
+            return Collections.singletonMap("java.security.krb5.conf", tmp.toAbsolutePath().toString());
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     private static void createWorkingDir() throws IOException {
         if (workingDir == null) {
-            workingDir = Paths.get(".", "target", "apacheds_working");
+            workingDir = Paths.get("target", "apacheds_working");
             if (!Files.exists(workingDir)) {
                 Files.createDirectories(workingDir);
             }
@@ -262,6 +253,24 @@ public class KerberosKDCUtil {
             }
 
         };
+    }
+
+    @Override
+    public Map<String, String> start() {
+        try {
+            startLdapServer();
+            startKDC();
+            initialised = true;
+            return setupEnvironment();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void stop() {
+        kdcServer.stop();
+        initialised = false;
     }
 
     private static class UsernamePasswordCBH implements CallbackHandler {

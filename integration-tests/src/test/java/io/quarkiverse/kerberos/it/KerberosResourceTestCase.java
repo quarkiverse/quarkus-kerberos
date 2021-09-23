@@ -38,7 +38,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
-import io.quarkiverse.kerberos.test.utils.KerberosKDCUtil;
+import io.quarkiverse.kerberos.test.utils.KerberosKDCTestResource;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -48,6 +49,7 @@ import io.restassured.RestAssured;
  */
 @QuarkusTest
 @TestHTTPEndpoint(IdentityResource.class)
+@QuarkusTestResource(KerberosKDCTestResource.class)
 public class KerberosResourceTestCase {
     public static final String NEGOTIATE = "Negotiate";
 
@@ -55,7 +57,6 @@ public class KerberosResourceTestCase {
 
     @BeforeAll
     public static void startServers() throws Exception {
-        KerberosKDCUtil.startServer();
         SPNEGO = new Oid("1.3.6.1.5.5.2");
     }
 
@@ -68,7 +69,7 @@ public class KerberosResourceTestCase {
                 .header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
         assertEquals(NEGOTIATE, header);
 
-        Subject clientSubject = KerberosKDCUtil.login("jduke", "theduke".toCharArray());
+        Subject clientSubject = KerberosKDCTestResource.login("jduke", "theduke".toCharArray());
 
         Subject.doAs(clientSubject, new PrivilegedExceptionAction<Void>() {
 

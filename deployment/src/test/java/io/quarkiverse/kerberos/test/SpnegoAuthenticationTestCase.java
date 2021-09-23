@@ -42,13 +42,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
-import io.quarkiverse.kerberos.test.utils.KerberosKDCUtil;
+import io.quarkiverse.kerberos.test.utils.KerberosKDCTestResource;
 import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.restassured.RestAssured;
 
 /**
  * A test case to test the SPNEGO authentication mechanism.
  */
+@QuarkusTestResource(KerberosKDCTestResource.class)
 public class SpnegoAuthenticationTestCase {
     public static final String NEGOTIATE = "Negotiate";
 
@@ -65,8 +67,7 @@ public class SpnegoAuthenticationTestCase {
     private static Oid SPNEGO;
 
     @BeforeAll
-    public static void startServers() throws Exception {
-        KerberosKDCUtil.startServer();
+    public static void setup() throws Exception {
         SPNEGO = new Oid("1.3.6.1.5.5.2");
     }
 
@@ -79,7 +80,7 @@ public class SpnegoAuthenticationTestCase {
                 .header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
         assertEquals(NEGOTIATE, header);
 
-        Subject clientSubject = KerberosKDCUtil.login("jduke", "theduke".toCharArray());
+        Subject clientSubject = KerberosKDCTestResource.login("jduke", "theduke".toCharArray());
 
         Subject.doAs(clientSubject, new PrivilegedExceptionAction<Void>() {
 

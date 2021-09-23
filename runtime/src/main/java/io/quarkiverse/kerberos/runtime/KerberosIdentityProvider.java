@@ -185,6 +185,9 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
         Oid oid = new Oid(kerberosConfig.useSpnegoOid ? SPNEGO_OID : KERBEROS_OID);
 
         GSSManager gssManager = GSSManager.getInstance();
+        if (gssManager == null) {
+            throw new IllegalStateException("GSSManager was null");
+        }
 
         GSSName gssService = gssManager.createName(completeServicePrincipalName, null);
         return gssManager.createContext(gssService.canonicalize(oid), oid, null, GSSContext.INDEFINITE_LIFETIME);

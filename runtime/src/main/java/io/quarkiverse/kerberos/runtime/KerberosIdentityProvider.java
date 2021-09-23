@@ -51,8 +51,12 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
     private static final Logger LOG = Logger.getLogger(KerberosIdentityProvider.class);
 
     private static final String KRB5_LOGIN_MODULE = "com.sun.security.auth.module.Krb5LoginModule";
+
+    // See http://oid-info.com/get/1.2.840.113554.1.2.2
     private static final String KERBEROS_OID = "1.2.840.113554.1.2.2";
+    // See http://oid-info.com/get/1.3.6.1.5.5.2
     private static final String SPNEGO_OID = "1.3.6.1.5.5.2";
+
     private static final String DEFAULT_LOGIN_CONTEXT_NAME = "KDC";
 
     private final Instance<KerberosCallbackHandler> callbackHandler;
@@ -109,7 +113,7 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
                     String completeServicePrincipalName = getCompleteServicePrincipalName(routingContext);
                     Subject serviceSubject = getSubjectForServicePrincipal(completeServicePrincipalName);
                     if (serviceSubject == null) {
-                        LOG.debugf("Service Principal Subject is null");
+                        LOG.debug("Service Principal Subject is null");
                         throw new AuthenticationCompletionException();
                     }
 
@@ -208,8 +212,8 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
     }
 
     static class KerberosPrincipal implements Principal {
-        private String simpleName;
-        private String complexName;
+        private final String simpleName;
+        private final String complexName;
 
         public KerberosPrincipal(GSSName srcName) {
             this.complexName = srcName.toString();
@@ -253,7 +257,7 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
             if (!DEFAULT_LOGIN_CONTEXT_NAME.equals(name)) {
                 throw new IllegalArgumentException("Unexpected name '" + name + "'");
             }
-
+            // See https://docs.oracle.com/javase/8/docs/jre/api/security/jaas/spec/com/sun/security/auth/module/Krb5LoginModule.html
             AppConfigurationEntry[] entries = new AppConfigurationEntry[1];
             Map<String, Object> options = new HashMap<>();
             if (kerberosConfig.debug) {

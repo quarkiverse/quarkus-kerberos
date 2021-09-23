@@ -1,20 +1,12 @@
 # Quarkus - Kerberos
 
-## Welcome to Quarkiverse!
+_Add Kerberos authentication support to Quarkus for HTTP requests_
 
-Congratulations and thank you for creating a new Quarkus extension project in Quarkiverse!
+This project extends Quarkus HTTP security and adds support for Kerberos. 
+It supports the _negotiate_ authentication request flow.
 
-Feel free to replace this content with the proper description of your new project and necessary instructions how to use and contribute to it.
 
-You can find the basic info, Quarkiverse policies and conventions in [the Quarkiverse wiki](https://github.com/quarkiverse/quarkiverse/wiki).
-
-In case you are creating a Quarkus extension project for the first time, please follow [Building My First Extension](https://quarkus.io/guides/building-my-first-extension) guide.
-
-Other useful articles related to Quarkus extension development can be found under the [Writing Extensions](https://quarkus.io/guides/#writing-extensions) guide category on the [Quarkus.io](http://quarkus.io) website.
-
-Thanks again, good luck and have fun!
-
-## Documentation
+## Documentation (To be written)
 
 The documentation for this extension should be maintained as part of this repository and it is stored in the `docs/` directory. 
 

@@ -11,7 +11,6 @@ import io.quarkiverse.kerberos.NegotiateAuthenticationRequest;
 import io.quarkus.security.identity.IdentityProviderManager;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.identity.request.AuthenticationRequest;
-import io.quarkus.security.identity.request.TokenAuthenticationRequest;
 import io.quarkus.vertx.http.runtime.security.ChallengeData;
 import io.quarkus.vertx.http.runtime.security.HttpAuthenticationMechanism;
 import io.quarkus.vertx.http.runtime.security.HttpCredentialTransport;
@@ -39,7 +38,13 @@ public class KerberosAuthenticationMechanism implements HttpAuthenticationMechan
         String negotiateToken = extractNegotiateToken(context);
         if (negotiateToken != null) {
             return identityProviderManager.authenticate(HttpSecurityUtils.setRoutingContextAttribute(
-                    new NegotiateAuthenticationRequest(negotiateToken), context));
+                    new NegotiateAuthenticationRequest(negotiateToken), context)).map(s -> {
+                        if (context.get(NEGOTIATE_DATA) != null) {
+                            context.response().headers().add(HttpHeaderNames.WWW_AUTHENTICATE,
+                                    NEGOTIATE_SCHEME + " " + context.get(NEGOTIATE_DATA));
+                        }
+                        return s;
+                    });
         }
 
         return Uni.createFrom().nullItem();
@@ -60,7 +65,7 @@ public class KerberosAuthenticationMechanism implements HttpAuthenticationMechan
     public Set<Class<? extends AuthenticationRequest>> getCredentialTypes() {
         // The service ticket can be viewed as an Spnego token.
         // TODO: However it will be easier to deal with a Negotiate specific request object.
-        return Collections.singleton(TokenAuthenticationRequest.class);
+        return Collections.singleton(NegotiateAuthenticationRequest.class);
     }
 
     @Override

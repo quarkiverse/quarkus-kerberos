@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -120,6 +119,10 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
 
                     byte[] negotiationBytes = Subject.doAs(serviceSubject,
                             new ValidateServiceTicketAction(gssContext, Base64.getDecoder().decode(serviceTicket)));
+                    if (negotiationBytes != null && negotiationBytes.length > 0) {
+                        routingContext.put(KerberosAuthenticationMechanism.NEGOTIATE_DATA,
+                                Base64.getEncoder().encodeToString(negotiationBytes));
+                    }
                     if (gssContext.isEstablished()) {
                         GSSName srcName = gssContext.getSrcName();
                         if (srcName == null) {
@@ -137,8 +140,6 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
                             LOG.debugf("GSS context is not established but no more negotiation data is available");
                             throw new AuthenticationCompletionException();
                         }
-                        routingContext.put(KerberosAuthenticationMechanism.NEGOTIATE_DATA,
-                                Base64.getEncoder().encode(negotiationBytes));
                         LOG.debugf("Token %s is processed, continue to negotiate", serviceTicket);
                         // Trigger a new challenge
                         throw new AuthenticationFailedException();

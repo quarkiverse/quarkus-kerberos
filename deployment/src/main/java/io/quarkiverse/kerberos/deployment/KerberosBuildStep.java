@@ -3,10 +3,8 @@ package io.quarkiverse.kerberos.deployment;
 import io.quarkiverse.kerberos.runtime.KerberosAuthenticationMechanism;
 import io.quarkiverse.kerberos.runtime.KerberosIdentityProvider;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
-import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 
 public class KerberosBuildStep {
 
@@ -16,12 +14,10 @@ public class KerberosBuildStep {
     }
 
     @BuildStep
-    public void additionalBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans,
-            BuildProducer<ReflectiveClassBuildItem> reflectiveClasses) {
-        AdditionalBeanBuildItem.Builder builder = AdditionalBeanBuildItem.builder().setUnremovable();
-
-        builder.addBeanClass(KerberosAuthenticationMechanism.class)
+    public AdditionalBeanBuildItem additionalBeans() {
+        AdditionalBeanBuildItem.Builder builder = AdditionalBeanBuildItem.builder().setUnremovable()
+                .addBeanClass(KerberosAuthenticationMechanism.class)
                 .addBeanClass(KerberosIdentityProvider.class);
-        additionalBeans.produce(builder.build());
+        return builder.build();
     }
 }

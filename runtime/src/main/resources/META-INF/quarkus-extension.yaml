@@ -1,9 +1,14 @@
-name: Kerberos
-#description: Kerberos ...
+---
+artifact: ${project.groupId}:${project.artifactId}:${project.version}
+name: "Kerberos"
 metadata:
-#  keywords:
-#    - kerberos
-#  guide: ...
-#  categories:
-#    - "miscellaneous"
-#  status: "preview"
+  keywords:
+    - "kerberos"
+    - "spnego"
+    - "negotiate"
+  categories:
+    - "security"
+  status: "experimental"
+  config:
+    - "quarkus.kerberos."
+ 

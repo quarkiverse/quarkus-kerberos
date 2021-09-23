@@ -1,0 +1,12 @@
+dn: uid=jduke,ou=users,dc=quarkus,dc=io
+objectClass: top
+objectClass: person
+objectClass: inetOrgPerson
+objectClass: krb5principal
+objectClass: krb5kdcentry
+cn: Java Duke
+sn: duke
+uid: jduke
+userPassword: theduke
+krb5PrincipalName: jduke@QUARKUS.IO
+krb5KeyVersionNumber: 0

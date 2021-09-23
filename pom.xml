@@ -24,6 +24,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.version>2.2.3.Final</quarkus.version>
+    <apacheds-all.version>2.0.0-M15</apacheds-all.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -33,6 +34,16 @@
         <version>${quarkus.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.quarkiverse.kerberos</groupId>
+        <artifactId>quarkus-kerberos</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.directory.server</groupId>
+        <artifactId>apacheds-all</artifactId>
+        <version>${apacheds-all.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

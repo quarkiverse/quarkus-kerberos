@@ -1,0 +1,4 @@
+dn: ou=users,dc=quarkus,dc=io
+objectClass: organizationalUnit
+objectClass: top
+ou: users

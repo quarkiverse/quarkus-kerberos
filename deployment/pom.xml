@@ -17,7 +17,6 @@
     <dependency>
       <groupId>io.quarkiverse.kerberos</groupId>
       <artifactId>quarkus-kerberos</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -29,7 +28,22 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-resteasy-reactive-deployment</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5-internal</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.directory.server</groupId>
+      <artifactId>apacheds-all</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

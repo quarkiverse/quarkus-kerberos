@@ -1,4 +1,4 @@
-package io.quarkiverse.kerberos.test;
+package io.quarkiverse.kerberos.test.utils;
 
 import static javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag.REQUIRED;
 

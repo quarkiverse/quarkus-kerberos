@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-package io.quarkiverse.kerberos.test;
+package io.quarkiverse.kerberos.it;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivilegedExceptionAction;
 import java.util.Base64;
-import java.util.function.Supplier;
 
 import javax.security.auth.Subject;
 
@@ -35,32 +34,22 @@ import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSManager;
 import org.ietf.jgss.GSSName;
 import org.ietf.jgss.Oid;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.quarkiverse.kerberos.test.utils.KerberosKDCUtil;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
+import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 
 /**
  * A test case to test the SPNEGO authentication mechanism.
  */
-public class SpnegoAuthenticationTestCase {
+@QuarkusTest
+@TestHTTPEndpoint(IdentityResource.class)
+public class KerberosResourceTestCase {
     public static final String NEGOTIATE = "Negotiate";
-
-    @RegisterExtension
-    static QuarkusUnitTest quarkusUnitTest = new QuarkusUnitTest()
-            .setArchiveProducer(new Supplier<JavaArchive>() {
-                @Override
-                public JavaArchive get() {
-                    return ShrinkWrap.create(JavaArchive.class)
-                            .addClasses(IdentityResource.class);
-                }
-            });
 
     private static Oid SPNEGO;
 
@@ -73,7 +62,7 @@ public class SpnegoAuthenticationTestCase {
     @Test
     public void testSpnegoSuccess() throws Exception {
 
-        var header = RestAssured.get("/identity")
+        var header = RestAssured.get()
                 .then().statusCode(401)
                 .extract()
                 .header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
@@ -100,7 +89,7 @@ public class SpnegoAuthenticationTestCase {
                         var result = RestAssured.given()
                                 .header(HttpHeaderNames.AUTHORIZATION.toString(),
                                         NEGOTIATE + " " + Base64.getEncoder().encodeToString(token))
-                                .get("/identity").then();
+                                .get().then();
 
                         String header = result.extract().header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
                         if (header != null) {

@@ -42,8 +42,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.directory.server</groupId>
-      <artifactId>apacheds-all</artifactId>
+      <groupId>io.quarkiverse.kerberos</groupId>
+      <artifactId>quarkus-kerberos-test-util</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

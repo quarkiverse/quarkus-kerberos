@@ -16,7 +16,7 @@
  *  limitations under the License.
  */
 
-package io.quarkiverse.kerberos.test;
+package io.quarkiverse.kerberos.test.utils;
 
 import static javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag.REQUIRED;
 
@@ -70,12 +70,9 @@ import org.apache.directory.server.protocol.shared.transport.UdpTransport;
  * It is better to start the server once instead of once per test but once running
  * the overhead is minimal.
  *
- * TODO - May be able to add some lifecycle methods to DefaultServer to allow
  * for an extension.
- *
- * @author <a href="mailto:darran.lofthouse@jboss.com">Darran Lofthouse</a>
  */
-class KerberosKDCUtil {
+public class KerberosKDCUtil {
 
     private static final boolean IS_IBM = System.getProperty("java.vendor").contains("IBM");
 
@@ -228,7 +225,7 @@ class KerberosKDCUtil {
         }
     }
 
-    static Subject login(final String userName, final char[] password) throws LoginException {
+    public static Subject login(final String userName, final char[] password) throws LoginException {
         Subject theSubject = new Subject();
         CallbackHandler cbh = new UsernamePasswordCBH(userName, password);
         LoginContext lc = new LoginContext("KDC", theSubject, cbh, createJaasConfiguration());

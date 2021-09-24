@@ -24,7 +24,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.version>2.2.3.Final</quarkus.version>
-    <apacheds-all.version>2.0.0-M15</apacheds-all.version>
+    <apacheds-all.version>2.0.0.AM26</apacheds-all.version>
   </properties>
   <dependencyManagement>
     <dependencies>

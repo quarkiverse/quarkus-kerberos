@@ -123,7 +123,7 @@ public class KerberosKDCTestResource implements QuarkusTestResourceLifecycleMana
     private static void createPartition(final DirectoryServiceFactory dsf, final SchemaManager schemaManager, final String id,
             final String suffix) throws Exception {
         PartitionFactory pf = dsf.getPartitionFactory();
-        Partition p = pf.createPartition(schemaManager, id, suffix, 1000, workingDir.toFile());
+        Partition p = pf.createPartition(schemaManager, null, id, suffix, 1000, workingDir.toFile());
         pf.addIndex(p, "krb5PrincipalName", 10);
         p.initialize();
         directoryService.addPartition(p);

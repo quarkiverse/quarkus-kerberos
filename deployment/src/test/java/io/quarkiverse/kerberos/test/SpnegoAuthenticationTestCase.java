@@ -22,14 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.nio.charset.StandardCharsets;
 import java.security.PrivilegedExceptionAction;
 import java.util.Base64;
 import java.util.function.Supplier;
 
 import javax.security.auth.Subject;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.hamcrest.Matchers;
 import org.ietf.jgss.GSSContext;
 import org.ietf.jgss.GSSManager;
@@ -105,13 +103,7 @@ public class SpnegoAuthenticationTestCase {
 
                         String header = result.extract().header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
                         if (header != null) {
-
-                            byte[] headerBytes = header.getBytes(StandardCharsets.US_ASCII);
-                            // FlexBase64.decode() returns byte buffer, which can contain backend array of greater size.
-                            // when on such ByteBuffer is called array(), it returns the underlying byte array including the 0 bytes
-                            // at the end, which makes the token invalid. => using Base64 mime decoder, which returnes directly properly sized byte[].
-                            token = Base64.getMimeDecoder().decode(
-                                    ArrayUtils.subarray(headerBytes, NEGOTIATE.toString().length() + 1, headerBytes.length));
+                            token = Base64.getDecoder().decode(header.substring(NEGOTIATE.length() + 1));
                         }
 
                         if (result.extract().statusCode() == 200) {

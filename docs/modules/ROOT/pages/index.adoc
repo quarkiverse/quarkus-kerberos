@@ -1,7 +1,13 @@
 = Quarkus - Kerberos
 :extension-status: preview
 
-Describe what the extension does here.
+== Introduction
+
+[Kerberos](https://www.kerberos.org/software/tutorial.html) is a network authentication protocol.
+
+Client acquires a `service ticket` from Kerberos `Key Distribution Center` (`KDC`) and submits it to an application which will verify it with its service principal against `KDC` and grant an access if the verification has been successful.
+
+This extension supports `Kerberos version 5` with the `HTTP` [Negotiate](https://datatracker.ietf.org/doc/html/rfc4559) authentication scheme which is based on the `Simple And Protected Negotiate Mechanism` (`SPNEGO`) and the `Generic Security Services Application Program Interface` (`GSSAPI`).
 
 == Installation
 
@@ -15,6 +21,139 @@ In your `pom.xml` file, add:
     <artifactId>quarkus-kerberos</artifactId>
 </dependency>
 ----
+
+== Getting Started
+
+First you have to prepare your Kerberos environment. The description of how it should be done securely is out of scope of this document, please follow the deployment specfic policies.
+
+However, here is a sequence of steps you can try for a quick test:
+
+1. Install Kerberos:
+
+Fedora: `[root@server ~]# yum install krb5-server krb5-libs krb5-workstation`.
+If you do not use Fedora then follow the OS specific instructions.
+
+2. Edit `/etc/krb5.conf` - either uncomment the configuration related to `EXAMPLE.COM` or add a new realm, example, `QUARKUS.COM`. Make sure the realm's `kdc` and `admin_server` properties point to `localhost`.
+
+3. Create the database: `kdb5_util create -s`.
+
+4. Start `kadmin.local` and add principals and keytabs in its command line:
+
+User principal:
+
+`addprinc bob`
+(use password `bob` or whatever you prefer)
+
+Service principal:
+
+`addprinc HTTP/localhost`
+(use password `service` or whatever you prefer)
+
+Add a keytab for the service principal:
+
+`ktadd -k /etc/service.keytab HTTP/localhost`
+
+and press `q` to exit.
+
+To make it easier to test you may need to do `chmod og+r /etc/*.keytab` since you are creating them as a root but you'll run Quarkus App without the root permissions.
+
+5. start KDC: `systemctl start krb5kdc.service` and `systemctl start kadmin.service`
+
+6. Prepare a service ticket for `bob`:
+
+`kinit bob`
+
+7. Create your Quarkus application which will use this extension. Lets assume it has a JAX-RS method with a `/api/users/me` path and which returns a user name. Update its `application.properties` to point to the service principal key tab: `quarkus.kerberos.keytab-path=/etc/service.keytab`.
+
+8. Build and start the application and test it:
+
+`curl --negotiate -u bob@EXAMPLE.COM -v http://localhost:8080/api/users/me`
+
+It should return `bob`.
+
+== How to configure the extension.
+
+In many cases all you will need is to ensure the service principal password or its keytab is accessible. If you have created a keytab file then use `quarkus.kerberos.keytab-path` to point to it - using the keytab is recommended.
+
+If you haven't created a keytab just yet then you can register a custom callback handler, for example:
+
+```java
+import javax.enterprise.context.ApplicationScoped;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+
+import io.quarkiverse.kerberos.KerberosCallbackHandler;
+
+public class UsernamePasswordCallbackHandler implements KerberosCallbackHandler {
+        private final String username;
+        private final char[] password;
+
+        private UsernamePasswordCallbackHandler(final String username, final char[] password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @Override
+        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+            for (Callback current : callbacks) {
+                if (current instanceof NameCallback) {
+                    NameCallback ncb = (NameCallback) current;
+                    ncb.setName(username);
+                } else if (current instanceof PasswordCallback) {
+                    PasswordCallback pcb = (PasswordCallback) current;
+                    pcb.setPassword(password);
+                } else {
+                    throw new UnsupportedCallbackException(current);
+                }
+            }
+        }
+    }
+}
+```
+
+Note `io.quarkiverse.kerberos.KerberosCallbackHandler` extends `javax.security.auth.callback.Callback` - it only acts as a marker interface for this extension to avoid having unrelated CallbackHandlers injected.
+
+The service principal name itself is calculated from the current HTTP `Host` header, for example, given `Host: localhost:8080` the name will be calculated as `HTTP/localhost`.
+If necessay it can be customized with `quarkus.kerberos.service-principal-name`.
+
+If the `KDC` configuration has no default realm configured then a service principal realm can be set with `quarkus.kerberos.service-principal-realm`.
+
+== User Principal
+
+You can access a user principal in the service code once the authentication has been completed, for example:
+
+```java
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+
+import io.quarkus.security.Authenticated;
+import io.quarkus.security.identity.SecurityIdentity;
+
+@Path("/api/users")
+@Authenticated
+public class UsersResource {
+
+    @Inject
+    SecurityIdentity identity;
+
+    @GET
+    @Path("/me")
+    @Produces("text/plain")
+    public String me() {
+        return identity.getPrincipal().getName();
+    }
+}
+```
+
+You can also access `org.ietf.jgss.GSSContext` context used during the negotiation process:
+
+`identity.getCredential(quarkus.quariverse.GSSContextCredential.class)`.
 
 [[extension-configuration-reference]]
 == Extension Configuration Reference

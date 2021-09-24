@@ -56,7 +56,7 @@ public class KerberosConfig {
      * Kerberos Service Principal Realm Name.
      * If this property is set then it will be added to the service principal name, for example,
      * "HTTP/localhost@SERVICE-REALM.COM". Setting the realm property is not required if it matches
-     * a default realm set in the Kerberos Distribution Center (KDC) configuration.
+     * a default realm set in the Kerberos Key Distribution Center (KDC) configuration.
      */
     @ConfigItem
     public Optional<String> servicePrincipalRealm;

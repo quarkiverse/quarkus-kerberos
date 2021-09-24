@@ -86,6 +86,7 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 
 import io.quarkiverse.kerberos.KerberosCallbackHandler;
 
+@ApplicationScoped
 public class UsernamePasswordCallbackHandler implements KerberosCallbackHandler {
         private final String username;
         private final char[] password;
@@ -149,9 +150,39 @@ public class UsersResource {
 }
 ```
 
+For example, given `bob@EXAMPLE.COM`, a simple `bob` name will be returned.
+You can cast `Principal` to `quarkiverse.kerberos.KerberosPrincipal` and get a full `bob@EXAMPLE.COM` name and/or the realm part of the name, `EXAMPLE.COM`.
+
 You can also access `org.ietf.jgss.GSSContext` context used during the negotiation process:
 
-`identity.getCredential(quarkus.quariverse.GSSContextCredential.class)`.
+`GSSContext context = identity.getCredential(quarkus.quariverse.GSSContextCredential.class).getGSSContext();`.
+
+== JAAS Login Configuration
+
+The extension will generate a JAAS Login Configuration by default.
+
+However, if you have an existing JAAS Login Configuration then set `quarkus.kerberos.login-context-name` to point to a JAAS Configuration entry and use a `java.security.auth.login.config' system property to point to the file containing this configuration entry.
+
+== Service Principal Subject Customization
+
+The extension will use `javax.security.auth.login.LoginContext` to create a `Subject` representing a service principal, using the auto-generated or external JAAS Login Configuration as well as the registered callback unless a keytab is used.
+
+You can customize this process by registering a custom `quarkiverse.kerberos.ServicePrincipalSubjectFactory`:
+
+```java
+import javax.enterprise.context.ApplicationScoped;
+import javax.security.auth.Subject;
+import io.quarkiverse.kerberos.ServicePrincipalSubjectFactory;
+
+@ApplicationScoped
+public class CustomServicePrincipalSubjectFactory implements ServicePrincipalSubjectFactory {
+        @Override
+        public Subject getSubjectForServicePrincipal(String servicePrincipalName) {
+            ....
+        }
+    }
+}
+```
 
 [[extension-configuration-reference]]
 == Extension Configuration Reference

@@ -6,7 +6,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Principal;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Base64;
@@ -32,6 +31,7 @@ import org.jboss.logging.Logger;
 
 import io.quarkiverse.kerberos.GSSContextCredential;
 import io.quarkiverse.kerberos.KerberosCallbackHandler;
+import io.quarkiverse.kerberos.KerberosPrincipal;
 import io.quarkiverse.kerberos.NegotiateAuthenticationRequest;
 import io.quarkiverse.kerberos.ServicePrincipalSubjectFactory;
 import io.quarkus.runtime.configuration.ConfigurationException;
@@ -209,26 +209,6 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
             name += "@" + kerberosConfig.servicePrincipalRealm.get();
         }
         return name;
-    }
-
-    static class KerberosPrincipal implements Principal {
-        private final String simpleName;
-        private final String complexName;
-
-        public KerberosPrincipal(GSSName srcName) {
-            this.complexName = srcName.toString();
-            int index = complexName.lastIndexOf('@');
-            simpleName = index > 0 ? complexName.substring(0, index) : complexName;
-        }
-
-        public String getGssSourceName() {
-            return complexName;
-        }
-
-        @Override
-        public String getName() {
-            return simpleName;
-        }
     }
 
     private static final class ValidateServiceTicketAction implements PrivilegedExceptionAction<byte[]> {

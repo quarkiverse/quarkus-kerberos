@@ -3,11 +3,11 @@
 
 == Introduction
 
-[Kerberos](https://www.kerberos.org/software/tutorial.html) is a network authentication protocol.
+link:https://www.kerberos.org/software/tutorial.html[Kerberos] is a network authentication protocol.
 
 Client acquires a `service ticket` from Kerberos `Key Distribution Center` (`KDC`) and submits it to an application which will verify it with its service principal against `KDC` and grant an access if the verification has been successful.
 
-This extension supports `Kerberos version 5` with the `HTTP` [Negotiate](https://datatracker.ietf.org/doc/html/rfc4559) authentication scheme which is based on the `Simple And Protected Negotiate Mechanism` (`SPNEGO`) and the `Generic Security Services Application Program Interface` (`GSSAPI`).
+This extension supports `Kerberos version 5` with the `HTTP` link:https://datatracker.ietf.org/doc/html/rfc4559[Negotiate] authentication scheme which is based on the `Simple And Protected Negotiate Mechanism` (`SPNEGO`) and the `Generic Security Services Application Program Interface` (`GSSAPI`).
 
 == Installation
 
@@ -28,16 +28,16 @@ First you have to prepare your Kerberos environment. The description of how it s
 
 However, here is a sequence of steps you can try for a quick test:
 
-1. Install Kerberos:
+* Install Kerberos:
 
 Fedora: `[root@server ~]# yum install krb5-server krb5-libs krb5-workstation`.
 If you do not use Fedora then follow the OS specific instructions.
 
-2. Edit `/etc/krb5.conf` - either uncomment the configuration related to `EXAMPLE.COM` or add a new realm, example, `QUARKUS.COM`. Make sure the realm's `kdc` and `admin_server` properties point to `localhost`.
+* Edit `/etc/krb5.conf` - either uncomment the configuration related to `EXAMPLE.COM` or add a new realm, example, `QUARKUS.COM`. Make sure the realm's `kdc` and `admin_server` properties point to `localhost`.
 
-3. Create the database: `kdb5_util create -s`.
+* Create the database: `kdb5_util create -s`.
 
-4. Start `kadmin.local` and add principals and keytabs in its command line:
+* Start `kadmin.local` and add principals and keytabs in its command line:
 
 User principal:
 
@@ -57,15 +57,13 @@ and press `q` to exit.
 
 To make it easier to test you may need to do `chmod og+r /etc/*.keytab` since you are creating them as a root but you'll run Quarkus App without the root permissions.
 
-5. start KDC: `systemctl start krb5kdc.service` and `systemctl start kadmin.service`
+* start KDC: `systemctl start krb5kdc.service` and `systemctl start kadmin.service`
 
-6. Prepare a service ticket for `bob`:
+* Prepare a service ticket for `bob`: `kinit bob`
 
-`kinit bob`
+* Create your Quarkus application which will use this extension. Lets assume it has a JAX-RS method with a `/api/users/me` path and which returns a user name. Update its `application.properties` to point to the service principal key tab: `quarkus.kerberos.keytab-path=/etc/service.keytab`.
 
-7. Create your Quarkus application which will use this extension. Lets assume it has a JAX-RS method with a `/api/users/me` path and which returns a user name. Update its `application.properties` to point to the service principal key tab: `quarkus.kerberos.keytab-path=/etc/service.keytab`.
-
-8. Build and start the application and test it:
+* Build and start the application and test it:
 
 `curl --negotiate -u bob@EXAMPLE.COM -v http://localhost:8080/api/users/me`
 

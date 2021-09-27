@@ -6,6 +6,7 @@ import com.sun.security.auth.module.Krb5LoginModule;
 
 import io.quarkiverse.kerberos.runtime.KerberosAuthenticationMechanism;
 import io.quarkiverse.kerberos.runtime.KerberosIdentityProvider;
+import io.quarkiverse.kerberos.runtime.KerberosProducer;
 import io.quarkiverse.kerberos.runtime.KerberosRecorder;
 import io.quarkus.arc.deployment.AdditionalBeanBuildItem;
 import io.quarkus.deployment.annotations.BuildStep;
@@ -27,7 +28,8 @@ public class KerberosBuildStep {
     public AdditionalBeanBuildItem additionalBeans() {
         AdditionalBeanBuildItem.Builder builder = AdditionalBeanBuildItem.builder().setUnremovable()
                 .addBeanClass(KerberosAuthenticationMechanism.class)
-                .addBeanClass(KerberosIdentityProvider.class);
+                .addBeanClass(KerberosIdentityProvider.class)
+                .addBeanClass(KerberosProducer.class);
         return builder.build();
     }
 

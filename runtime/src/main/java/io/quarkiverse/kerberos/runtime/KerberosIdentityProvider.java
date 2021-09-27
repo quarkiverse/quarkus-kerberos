@@ -29,7 +29,6 @@ import org.ietf.jgss.GSSName;
 import org.ietf.jgss.Oid;
 import org.jboss.logging.Logger;
 
-import io.quarkiverse.kerberos.GSSContextCredential;
 import io.quarkiverse.kerberos.KerberosCallbackHandler;
 import io.quarkiverse.kerberos.KerberosPrincipal;
 import io.quarkiverse.kerberos.NegotiateAuthenticationRequest;
@@ -134,11 +133,13 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
                             throw new AuthenticationCompletionException();
                         }
 
-                        GSSContextCredential gssContextCredential = new GSSContextCredential(gssContext);
-                        return QuarkusSecurityIdentity.builder()
-                                .addCredential(gssContextCredential)
-                                .setPrincipal(new KerberosPrincipal(srcName))
-                                .build();
+                        KerberosPrincipal principal = new KerberosPrincipal(srcName);
+                        QuarkusSecurityIdentity.Builder builder = QuarkusSecurityIdentity.builder()
+                                .setPrincipal(principal);
+                        if (principal.getRole() != null) {
+                            builder.addRole(principal.getRole());
+                        }
+                        return builder.build();
                     } else {
                         if (negotiationBytes == null || negotiationBytes.length == 0) {
                             LOG.debugf("GSS context is not established but no more negotiation data is available");

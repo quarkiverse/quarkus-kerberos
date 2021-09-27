@@ -131,6 +131,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import io.quarkiverse.kerberos.KerberosPrincipal;
+
 import io.quarkus.security.Authenticated;
 import io.quarkus.security.identity.SecurityIdentity;
 
@@ -140,6 +142,8 @@ public class UsersResource {
 
     @Inject
     SecurityIdentity identity;
+    @Inject
+    KerberosPrincipal kerberosPrincipal;
 
     @GET
     @Path("/me")
@@ -151,11 +155,7 @@ public class UsersResource {
 ```
 
 For example, given `bob@EXAMPLE.COM`, a simple `bob` name will be returned.
-You can cast `Principal` to `quarkiverse.kerberos.KerberosPrincipal` and get a full `bob@EXAMPLE.COM` name and/or the realm part of the name, `EXAMPLE.COM`.
-
-You can also access `org.ietf.jgss.GSSContext` context used during the negotiation process:
-
-`GSSContext context = identity.getCredential(quarkus.quariverse.GSSContextCredential.class).getGSSContext();`.
+You can cast `Principal` to `io.quarkiverse.kerberos.KerberosPrincipal` or inject it directly and get a full `bob@EXAMPLE.COM` (or `bob/admin@EXAMPLE.COM`) name and the realm part of the name, `EXAMPLE.COM`. If the principal name contains an `instance` qualifier such as `bob/admin` then `KerberosPrincipal` will return `admin` as the role name. 
 
 == JAAS Login Configuration
 
@@ -167,7 +167,7 @@ However, if you have an existing JAAS Login Configuration then set `quarkus.kerb
 
 The extension will use `javax.security.auth.login.LoginContext` to create a `Subject` representing a service principal, using the auto-generated or external JAAS Login Configuration as well as the registered callback unless a keytab is used.
 
-You can customize this process by registering a custom `quarkiverse.kerberos.ServicePrincipalSubjectFactory`:
+You can customize this process by registering a custom `io.quarkiverse.kerberos.ServicePrincipalSubjectFactory`:
 
 ```java
 import javax.enterprise.context.ApplicationScoped;

@@ -14,4 +14,4 @@ To get started, add the dependency:
 </dependency>
 ```
 
-For more details, check the complete [documentation](https://quarkiverse.github.io/quarkiverse-docs/quarkus-quarkiverse/dev/index.html).
+For more details, check the complete [documentation](https://quarkiverse.github.io/quarkiverse-docs/quarkus-kerberos/dev/index.html).

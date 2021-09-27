@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
+import io.quarkiverse.kerberos.KerberosPrincipal;
 import io.quarkus.security.Authenticated;
 import io.quarkus.security.identity.SecurityIdentity;
 
@@ -14,9 +15,13 @@ public class IdentityResource {
     @Inject
     SecurityIdentity securityIdentity;
 
+    @Inject
+    KerberosPrincipal kerberosPrincipal;
+
     @GET
     public String get() {
-        return securityIdentity.getPrincipal().getName();
+        return securityIdentity.getPrincipal().getName() + " " + kerberosPrincipal.getFullName() + " "
+                + kerberosPrincipal.getRealm();
     }
 
 }

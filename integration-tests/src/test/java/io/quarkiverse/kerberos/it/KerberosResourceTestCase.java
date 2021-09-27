@@ -104,7 +104,7 @@ public class KerberosResourceTestCase {
                         }
 
                         if (result.extract().statusCode() == 200) {
-                            result.body(Matchers.is("jduke"));
+                            result.body(Matchers.is("jduke jduke@QUARKUS.IO QUARKUS.IO"));
                             gotOur200 = true;
                         } else if (result.extract().statusCode() == 401) {
                             assertTrue(header != null, "We did get a header.");

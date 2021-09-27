@@ -5,9 +5,14 @@ import java.security.Principal;
 import org.ietf.jgss.GSSName;
 
 public class KerberosPrincipal implements Principal {
-    private final String simpleName;
-    private final String fullName;
-    private final String realmName;
+    private String fullName;
+    private String simpleName;
+    private String realm;
+    private String role;
+
+    public KerberosPrincipal() {
+
+    }
 
     public KerberosPrincipal(GSSName srcName) {
         this.fullName = srcName.toString();
@@ -18,9 +23,12 @@ public class KerberosPrincipal implements Principal {
             simpleName = fullName;
         }
         if (realmIndex > 0 && realmIndex + 1 < fullName.length()) {
-            realmName = fullName.substring(realmIndex + 1);
-        } else {
-            realmName = null;
+            realm = fullName.substring(realmIndex + 1);
+        }
+        int roleIndex = simpleName.indexOf('/');
+        if (roleIndex > 0 && roleIndex + 1 < simpleName.length()) {
+            role = simpleName.substring(roleIndex + 1);
+            simpleName = simpleName.substring(0, roleIndex);
         }
     }
 
@@ -33,7 +41,11 @@ public class KerberosPrincipal implements Principal {
         return simpleName;
     }
 
-    public String getRealmName() {
-        return realmName;
+    public String getRealm() {
+        return realm;
+    }
+
+    public String getRole() {
+        return role;
     }
 }

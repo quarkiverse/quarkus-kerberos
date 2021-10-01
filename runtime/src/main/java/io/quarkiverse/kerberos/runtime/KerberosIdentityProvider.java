@@ -2,6 +2,7 @@ package io.quarkiverse.kerberos.runtime;
 
 import static javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag.REQUIRED;
 
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,6 +18,11 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
@@ -86,7 +92,7 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
             } else {
                 Path filePath = Paths.get(kerberosConfig.keytabPath.get());
                 if (Files.exists(filePath)) {
-                    realKeytabPath = filePath.toUri().toString();
+                    realKeytabPath = filePath.toAbsolutePath().toString();
                 }
             }
             if (realKeytabPath == null) {
@@ -173,16 +179,28 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
             }
         }
 
-        Configuration config = DEFAULT_LOGIN_CONTEXT_NAME.equals(kerberosConfig.loginContextName)
+        String loginContextName = kerberosConfig.loginContextName.orElse(DEFAULT_LOGIN_CONTEXT_NAME);
+        Configuration config = DEFAULT_LOGIN_CONTEXT_NAME.equals(loginContextName)
                 ? new DefaultJAASConfiguration(completeServicePrincipalName)
                 : null;
-        final LoginContext lc = new LoginContext(kerberosConfig.loginContextName,
+        final LoginContext lc = new LoginContext(loginContextName,
                 new Subject(),
                 // callback is not required if a keytab is used
-                (callbackHandler.isResolvable() ? callbackHandler.get() : null),
+                getCallback(completeServicePrincipalName),
                 config);
         lc.login();
         return lc.getSubject();
+    }
+
+    protected CallbackHandler getCallback(String completeServicePrincipalName) {
+        if (callbackHandler.isResolvable()) {
+            return callbackHandler.get();
+        }
+        if (kerberosConfig.servicePrincipalPassword.isPresent()) {
+            return new UsernamePasswordCBH(completeServicePrincipalName,
+                    kerberosConfig.servicePrincipalPassword.get().toCharArray());
+        }
+        return null;
     }
 
     protected GSSContext createGSSContext(RoutingContext routingContext, String completeServicePrincipalName)
@@ -255,6 +273,33 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
             entries[0] = new AppConfigurationEntry(KRB5_LOGIN_MODULE, REQUIRED, options);
 
             return entries;
+        }
+
+    }
+
+    private static class UsernamePasswordCBH implements CallbackHandler {
+        private final String username;
+        private final char[] password;
+
+        private UsernamePasswordCBH(final String username, final char[] password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @Override
+        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+            for (Callback current : callbacks) {
+                if (current instanceof NameCallback) {
+                    NameCallback ncb = (NameCallback) current;
+                    ncb.setName(username);
+                } else if (current instanceof PasswordCallback) {
+                    PasswordCallback pcb = (PasswordCallback) current;
+                    pcb.setPassword(password);
+                } else {
+                    throw new UnsupportedCallbackException(current);
+                }
+            }
+
         }
 
     }

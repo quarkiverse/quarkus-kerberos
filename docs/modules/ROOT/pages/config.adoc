@@ -24,16 +24,16 @@ a| [[quarkus-kerberos_quarkus.kerberos.login-context-name]]`link:#quarkus-kerber
 
 [.description]
 --
-JAAS Login context name. If the context name is `KDC` (default) then the JAAS configuration will be created automatically otherwise a JAAS configuration file must be available and contain an entry matching its value - in this case use `java.security.auth.login.config` system property pointing to this file.
+JAAS Login context name. If it is not set then the JAAS configuration will be created automatically otherwise a JAAS configuration file must be available and contain an entry matching its value - in this case use `java.security.auth.login.config` system property pointing to this file.
 --|string
-|`KDC`
+|
 
 
 a| [[quarkus-kerberos_quarkus.kerberos.debug]]`link:#quarkus-kerberos_quarkus.kerberos.debug[quarkus.kerberos.debug]`
 
 [.description]
 --
-Specifies if a JAAS configuration `debug` property should be enabled. This property is only effective when `loginContextName` is set to `KDC` and the JAAS configuration is created automatically.
+Specifies if a JAAS configuration `debug` property should be enabled. This property is only effective when `loginContextName` is not set and the JAAS configuration is created automatically.
 --|boolean
 |`false`
 
@@ -42,7 +42,7 @@ a| [[quarkus-kerberos_quarkus.kerberos.keytab-path]]`link:#quarkus-kerberos_quar
 
 [.description]
 --
-Service principal keytab file path which will be used to set a JAAS configuration `keyTab` property. This property is only effective when `loginContextName` is set to `KDC` and the JAAS configuration is created automatically.
+Service principal keytab file path which will be used to set a JAAS configuration `keyTab` property. This property is only effective when `loginContextName` is not set and the JAAS configuration is created automatically.
 --|string
 |
 
@@ -69,6 +69,14 @@ a| [[quarkus-kerberos_quarkus.kerberos.service-principal-realm]]`link:#quarkus-k
 [.description]
 --
 Kerberos Service Principal Realm Name. If this property is set then it will be added to the service principal name, for example, `HTTP/localhost@SERVICE-REALM.COM`. Setting the realm property is not required if it matches a default realm set in the Kerberos Key Distribution Center (KDC) configuration.
+--|string
+|
+
+a| [[quarkus-kerberos_quarkus.kerberos.service-principal-password]]`link:#quarkus-kerberos_quarkus.kerberos.service-principal-password[quarkus.kerberos.service-principal-password]`
+
+[.description]
+--
+Kerberos Service Principal Password. Set this property only if using the `keytabPath`, custom `CallbackHandler` or `ServicePrincipalSubjectFactory` is not possible.
 --|string
 |
 

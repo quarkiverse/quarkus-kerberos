@@ -12,19 +12,19 @@ public class KerberosConfig {
     /**
      * JAAS Login context name.
      *
-     * If this property is set to "KDC" (default) then the JAAS configuration will be created automatically
+     * If this property is not set then the JAAS configuration will be created automatically
      * otherwise a JAAS configuration file must be available and contain an entry matching its value.
      * Use 'java.security.auth.login.config' system property to point to this JAAS configuration file.
      * 
      * Note this property will be ignored if a custom {@link io.quarkiverse.kerberos.ServicePrincipalSubjectFactory} is
      * registered, and it creates a non-null service Subject for the current authentication request.
      */
-    @ConfigItem(defaultValue = "KDC")
-    public String loginContextName;
+    @ConfigItem
+    public Optional<String> loginContextName;
 
     /**
      * Specifies if a JAAS configuration 'debug' property should be enabled.
-     * Note this property is only effective when {@code loginContextName} is set to 'KDC'
+     * Note this property is only effective when {@code loginContextName} is not set.
      * and the JAAS configuration is created automatically.
      */
     @ConfigItem(defaultValue = "false")
@@ -32,17 +32,11 @@ public class KerberosConfig {
 
     /**
      * Points to a service principal keytab file and will be used to set a JAAS configuration 'keyTab' property.
-     * Note this property is only effective when {@code loginContextName} is set to 'KDC'
+     * Note this property is only effective when {@code loginContextName} is not set.
      * and the JAAS configuration is created automatically.
      */
     @ConfigItem
     public Optional<String> keytabPath;
-
-    /**
-     * Specifies whether to use Spnego or Kerberos OID.
-     */
-    @ConfigItem(defaultValue = "true")
-    public boolean useSpnegoOid;
 
     /**
      * Kerberos Service Principal Name.
@@ -60,4 +54,18 @@ public class KerberosConfig {
      */
     @ConfigItem
     public Optional<String> servicePrincipalRealm;
+
+    /**
+     * Service principal password.
+     * Set this property only if using {@code keytabPath}, custom {@linkplain CallbackHandler} or
+     * {@linkplain ServicePrincipalSubjectFactory} is not possible.
+     */
+    @ConfigItem
+    public Optional<String> servicePrincipalPassword;
+
+    /**
+     * Specifies whether to use Spnego or Kerberos OID.
+     */
+    @ConfigItem(defaultValue = "true")
+    public boolean useSpnegoOid;
 }

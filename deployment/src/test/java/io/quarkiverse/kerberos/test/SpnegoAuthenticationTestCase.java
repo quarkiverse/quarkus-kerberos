@@ -44,13 +44,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.quarkiverse.kerberos.test.utils.KerberosKDCTestResource;
 import io.quarkus.test.QuarkusUnitTest;
-import io.quarkus.test.common.QuarkusTestResource;
 import io.restassured.RestAssured;
 
 /**
  * A test case to test the SPNEGO authentication mechanism.
  */
-@QuarkusTestResource(KerberosKDCTestResource.class)
 public class SpnegoAuthenticationTestCase {
     public static final String NEGOTIATE = "Negotiate";
 
@@ -60,7 +58,8 @@ public class SpnegoAuthenticationTestCase {
                 @Override
                 public JavaArchive get() {
                     return ShrinkWrap.create(JavaArchive.class)
-                            .addClasses(IdentityResource.class);
+                            .addClasses(IdentityResource.class)
+                            .addAsResource("application.properties");
                 }
             });
 

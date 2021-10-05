@@ -10,10 +10,15 @@ import io.quarkus.test.QuarkusDevModeTest;
 
 public class KerberosDevModeTest {
 
-    // Start hot reload (DevMode) test with your extension loaded
+    private static Class<?>[] testClasses = {
+            IdentityResource.class
+    };
+
     @RegisterExtension
-    static final QuarkusDevModeTest devModeTest = new QuarkusDevModeTest()
-            .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class));
+    static final QuarkusDevModeTest test = new QuarkusDevModeTest()
+            .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
+                    .addClasses(testClasses)
+                    .addAsResource("application-dev-mode.properties", "application.properties"));
 
     @Test
     public void writeYourOwnDevModeTest() {

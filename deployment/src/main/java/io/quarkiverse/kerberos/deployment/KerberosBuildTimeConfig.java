@@ -1,5 +1,6 @@
 package io.quarkiverse.kerberos.deployment;
 
+import io.quarkiverse.kerberos.deployment.devservices.DevServicesConfig;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigRoot;
 
@@ -13,4 +14,10 @@ public class KerberosBuildTimeConfig {
      */
     @ConfigItem(defaultValue = "true")
     public boolean enabled;
+
+    /**
+     * Dev services configuration.
+     */
+    @ConfigItem
+    public DevServicesConfig devservices;
 }

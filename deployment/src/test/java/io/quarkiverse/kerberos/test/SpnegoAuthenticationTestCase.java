@@ -19,30 +19,18 @@
 package io.quarkiverse.kerberos.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import java.nio.charset.StandardCharsets;
-import java.security.PrivilegedExceptionAction;
-import java.util.Base64;
 import java.util.function.Supplier;
 
-import javax.security.auth.Subject;
-
-import org.apache.commons.lang.ArrayUtils;
 import org.hamcrest.Matchers;
-import org.ietf.jgss.GSSContext;
-import org.ietf.jgss.GSSManager;
-import org.ietf.jgss.GSSName;
-import org.ietf.jgss.Oid;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.quarkiverse.kerberos.test.utils.KerberosKDCTestResource;
+import io.quarkiverse.kerberos.test.utils.KerberosTestClient;
 import io.quarkus.test.QuarkusUnitTest;
 import io.restassured.RestAssured;
 
@@ -63,12 +51,7 @@ public class SpnegoAuthenticationTestCase {
                 }
             });
 
-    private static Oid SPNEGO;
-
-    @BeforeAll
-    public static void setup() throws Exception {
-        SPNEGO = new Oid("1.3.6.1.5.5.2");
-    }
+    KerberosTestClient kerberosTestClient = new KerberosTestClient();
 
     @Test
     public void testSpnegoSuccess() throws Exception {
@@ -79,56 +62,8 @@ public class SpnegoAuthenticationTestCase {
                 .header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
         assertEquals(NEGOTIATE, header);
 
-        Subject clientSubject = KerberosKDCTestResource.login("jduke", "theduke".toCharArray());
-
-        Subject.doAs(clientSubject, new PrivilegedExceptionAction<Void>() {
-
-            @Override
-            public Void run() throws Exception {
-                GSSManager gssManager = GSSManager.getInstance();
-                GSSName serverName = gssManager.createName("HTTP/localhost", null);
-
-                GSSContext context = gssManager.createContext(serverName, SPNEGO, null, GSSContext.DEFAULT_LIFETIME);
-
-                byte[] token = new byte[0];
-
-                boolean gotOur200 = false;
-                while (!context.isEstablished()) {
-                    token = context.initSecContext(token, 0, token.length);
-
-                    if (token != null && token.length > 0) {
-                        var result = RestAssured.given()
-                                .header(HttpHeaderNames.AUTHORIZATION.toString(),
-                                        NEGOTIATE + " " + Base64.getEncoder().encodeToString(token))
-                                .get("/identity").then();
-
-                        String header = result.extract().header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
-                        if (header != null) {
-
-                            byte[] headerBytes = header.getBytes(StandardCharsets.US_ASCII);
-                            // FlexBase64.decode() returns byte buffer, which can contain backend array of greater size.
-                            // when on such ByteBuffer is called array(), it returns the underlying byte array including the 0 bytes
-                            // at the end, which makes the token invalid. => using Base64 mime decoder, which returnes directly properly sized byte[].
-                            token = Base64.getMimeDecoder().decode(
-                                    ArrayUtils.subarray(headerBytes, NEGOTIATE.toString().length() + 1, headerBytes.length));
-                        }
-
-                        if (result.extract().statusCode() == 200) {
-                            result.body(Matchers.is("jduke"));
-                            gotOur200 = true;
-                        } else if (result.extract().statusCode() == 401) {
-                            assertTrue(header != null, "We did get a header.");
-                        } else {
-                            fail(String.format("Unexpected status code %d", result.extract().statusCode()));
-                        }
-                    }
-                }
-
-                assertTrue(gotOur200);
-                assertTrue(context.isEstablished());
-                return null;
-            }
-        });
+        var result = kerberosTestClient.get("/identity", "jduke", "theduke");
+        result.body(Matchers.is("jduke"));
     }
 
 }

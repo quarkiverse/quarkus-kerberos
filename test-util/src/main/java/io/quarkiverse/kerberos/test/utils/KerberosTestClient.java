@@ -1,6 +1,5 @@
 package io.quarkiverse.kerberos.test.utils;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.charset.StandardCharsets;
@@ -52,22 +51,28 @@ public class KerberosTestClient {
                                             NEGOTIATE + " " + Base64.getEncoder().encodeToString(token))
                                     .get(path).then();
 
-                            String header = result.extract().header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
-                            if (header != null) {
-
-                                byte[] headerBytes = header.getBytes(StandardCharsets.US_ASCII);
-                                // FlexBase64.decode() returns byte buffer, which can contain backend array of greater size.
-                                // when on such ByteBuffer is called array(), it returns the underlying byte array including the 0 bytes
-                                // at the end, which makes the token invalid. => using Base64 mime decoder, which returnes directly properly sized byte[].
-                                token = Base64.getMimeDecoder().decode(
-                                        ArrayUtils.subarray(headerBytes, NEGOTIATE.toString().length() + 1,
-                                                headerBytes.length));
-                            }
-
                             if (result.extract().statusCode() == 200) {
                                 return result;
                             } else if (result.extract().statusCode() == 401) {
-                                assertTrue(header != null, "We did get a header.");
+                                String header = result.extract().header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
+                                if (header != null) {
+                                    if (header.length() > NEGOTIATE.toString().length() + 1) {
+                                        // Negotiation continues
+
+                                        byte[] headerBytes = header.getBytes(StandardCharsets.US_ASCII);
+                                        // FlexBase64.decode() returns byte buffer, which can contain backend array of greater size.
+                                        // when on such ByteBuffer is called array(), it returns the underlying byte array including the 0 bytes
+                                        // at the end, which makes the token invalid. => using Base64 mime decoder, which returnes directly properly sized byte[].
+                                        token = Base64.getMimeDecoder().decode(
+                                                ArrayUtils.subarray(headerBytes, NEGOTIATE.toString().length() + 1,
+                                                        headerBytes.length));
+                                    } else {
+                                        fail("Negotiation data has not been returned with WWW-Authenticate");
+                                    }
+                                } else {
+                                    //No challenge, authentication failure
+                                    return result;
+                                }
                             } else {
                                 fail(String.format("Unexpected status code %d", result.extract().statusCode()));
                             }

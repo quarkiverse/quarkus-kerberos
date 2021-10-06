@@ -164,6 +164,10 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
                 } catch (PrivilegedActionException ex) {
                     LOG.debugf("PrivilegedAction exception: %s", ex.getMessage());
                     throw new AuthenticationCompletionException(ex);
+                } catch (Throwable ex) {
+                    Throwable ex2 = ex.getCause() != null ? ex.getCause() : ex;
+                    LOG.debugf("Authentication failure: %s", ex2.getMessage());
+                    throw new AuthenticationCompletionException(ex2);
                 }
             }
 

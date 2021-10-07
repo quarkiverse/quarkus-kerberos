@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
-import io.quarkiverse.kerberos.test.utils.KerberosKDCTestResource;
 import io.quarkiverse.kerberos.test.utils.KerberosTestClient;
 import io.quarkus.test.QuarkusUnitTest;
 import io.restassured.RestAssured;
@@ -63,7 +62,7 @@ public class SpnegoAuthenticationTestCase {
         assertEquals(NEGOTIATE, header);
 
         var result = kerberosTestClient.get("/identity", "jduke", "theduke");
-        result.body(Matchers.is("jduke"));
+        result.statusCode(200).body(Matchers.is("jduke"));
     }
 
 }

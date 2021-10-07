@@ -66,6 +66,12 @@ public class DevServicesConfig {
     @ConfigItem
     public Map<String, String> principals;
 
+    /**
+     * The Kerberos realm.
+     */
+    @ConfigItem
+    public Optional<String> realm;
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -77,11 +83,13 @@ public class DevServicesConfig {
         // and as such the changes to this property should not cause restarting a container
         return enabled == that.enabled
                 && Objects.equals(imageName, that.imageName)
-                && Objects.equals(javaOpts, that.javaOpts);
+                && Objects.equals(javaOpts, that.javaOpts)
+                && Objects.equals(principals, that.principals)
+                && Objects.equals(realm, that.realm);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(enabled, imageName);
+        return Objects.hash(enabled, imageName, javaOpts, principals, realm);
     }
 }

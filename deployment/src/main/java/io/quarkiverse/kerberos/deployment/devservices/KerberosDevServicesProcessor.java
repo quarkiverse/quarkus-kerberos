@@ -39,8 +39,6 @@ import io.quarkus.devservices.common.ContainerLocator;
 import io.quarkus.runtime.LaunchMode;
 
 public class KerberosDevServicesProcessor {
-    static volatile DevServicesConfig capturedDevServicesConfiguration;
-
     private static final Logger LOG = Logger.getLogger(KerberosDevServicesProcessor.class);
 
     private static final String JAVA_OPTS = "JAVA_OPTS";
@@ -69,6 +67,7 @@ public class KerberosDevServicesProcessor {
     private static volatile List<Closeable> closeables;
     private static volatile boolean first = true;
     private final IsDockerWorking isDockerWorking = new IsDockerWorking(true);
+    private static volatile DevServicesConfig capturedDevServicesConfiguration;
     private static volatile KerberosDevServicesConfigBuildItem existingDevServiceConfig;
 
     @BuildStep(onlyIfNot = IsNormal.class, onlyIf = { IsEnabled.class, GlobalDevServicesConfig.Enabled.class })
@@ -82,8 +81,9 @@ public class KerberosDevServicesProcessor {
         DevServicesConfig currentDevServicesConfiguration = config.devservices;
         // Figure out if we need to shut down and restart any existing Kerberos container
         // if not and the Kerberos container has already started we just return
+        boolean restartRequired = false;
         if (closeables != null) {
-            boolean restartRequired = !currentDevServicesConfiguration.equals(capturedDevServicesConfiguration);
+            restartRequired = !currentDevServicesConfiguration.equals(capturedDevServicesConfiguration);
             if (!restartRequired) {
                 return existingDevServiceConfig;
             }
@@ -101,7 +101,7 @@ public class KerberosDevServicesProcessor {
         capturedDevServicesConfiguration = currentDevServicesConfiguration;
         StartResult startResult;
         try {
-            startResult = startContainer(devServicesSharedNetworkBuildItem.isPresent());
+            startResult = startContainer(devServicesSharedNetworkBuildItem.isPresent(), restartRequired);
             if (startResult == null) {
                 return null;
             }
@@ -152,14 +152,18 @@ public class KerberosDevServicesProcessor {
         return existingDevServiceConfig;
     }
 
-    private StartResult startContainer(boolean useSharedContainer) {
+    private StartResult startContainer(boolean useSharedContainer, boolean restart) {
         if (!capturedDevServicesConfiguration.enabled) {
             // explicitly disabled
             LOG.debug("Not starting Dev Services for Kerberos as it has been disabled in the config");
             return null;
         }
-        if (System.getProperty("java.security.krb5.conf") != null || System.getenv("KRB5_CONFIG") != null) {
-            LOG.debug("Not starting Dev Services for Kerberos as the Kerberos configuration file already exists");
+        if (System.getProperty("java.security.krb5.conf") != null && !restart) {
+            LOG.debug("Not starting Dev Services for Kerberos as the java.security.krb5.conf system property is already set");
+            return null;
+        }
+        if (System.getenv("KRB5_CONFIG") != null) {
+            LOG.debug("Not starting Dev Services for Kerberos as the KRB5_CONFIG environment variable already exists");
             return null;
         }
         if (isLoginContextNameConfigured()) {
@@ -240,7 +244,7 @@ public class KerberosDevServicesProcessor {
             content = content.replaceAll("<host>", host);
             content = content.replaceAll("<kdc_port>", kdcPort);
             content = content.replaceAll("<admin_server_port>", kdcAdminPort);
-            content = content.replaceAll("<realm>", getServicePrincipalRealm());
+            content = content.replaceAll("<realm>", getRealm());
             Path tmp = Files.createTempFile("devservices-krb5", ".conf");
             Files.write(tmp, content.getBytes());
             String krb5ConfigPath = tmp.toAbsolutePath().toString();
@@ -298,10 +302,10 @@ public class KerberosDevServicesProcessor {
             }
 
             withStartupTimeout(Duration.ofMillis(20000));
-            withEnv("KRB5_REALM", getServicePrincipalRealm());
+            withEnv("KRB5_REALM", getRealm());
             withEnv("KRB5_KDC", "localhost");
             withEnv("KRB5_PASS", "mypass");
-            waitingFor(Wait.forLogMessage("Principal \"admin/admin@" + getServicePrincipalRealm() + "\" created.*", 1));
+            waitingFor(Wait.forLogMessage("Principal \"admin/admin@" + getRealm() + "\" created.*", 1));
 
             if (javaOpts.isPresent()) {
                 addEnv(JAVA_OPTS, javaOpts.get());
@@ -337,7 +341,10 @@ public class KerberosDevServicesProcessor {
         }
     }
 
-    private static String getServicePrincipalRealm() {
+    private static String getRealm() {
+        if (capturedDevServicesConfiguration.realm.isPresent()) {
+            return capturedDevServicesConfiguration.realm.get();
+        }
         return ConfigProvider.getConfig().getOptionalValue(KERBEROS_SERVICE_PRINC_REALM_PROP, String.class)
                 .orElse(DEFAULT_KERBEROS_SERVICE_PRINC_REALM);
     }

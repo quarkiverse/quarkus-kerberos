@@ -184,6 +184,125 @@ public class CustomServicePrincipalSubjectFactory implements ServicePrincipalSub
 }
 ```
 
+== Dev Services for Kerberos
+
+link:https://quarkus.io/guides/dev-services[Quarkus Dev Services] support the automatic provisioning of unconfigured services in development and test mode.
+
+This extension provides `Dev Services for Kerberos` which uses a link:https://github.com/kerberos-io/kerberos-docker[Kerberos Docker] image.
+
+Start your application in a link:https://quarkus.io/guides/getting-started#development-mode[Dev Mode] with `mvn quarkus:dev`.
+
+You will see in the console something similar to:
+
+```shell
+$ mvn quarkus:dev
+
+2021-10-07 10:56:18,276 INFO  [🐳 [gcavalcante8808/krb5-server:latest]] (build-18) Creating container for image: gcavalcante8808/krb5-server:latest
+...
+2021-10-07 10:56:18,881 INFO  [🐳 [gcavalcante8808/krb5-server:latest]] (build-18) Container gcavalcante8808/krb5-server:latest started in PT0.621235S
+...
+Initializing database '/var/lib/krb5kdc/principal' for realm 'EXAMPLE.COM',
+...
+Principal "admin/admin@EXAMPLE.COM" created.
+
+2021-10-07 10:56:19,149 INFO  [io.qua.ker.dep.dev.KerberosDevServicesProcessor] (build-18) Kerberos configuration file path: /tmp/devservices-krb516887219905674106017.conf, mapped KDC port: 32771, mapped admin server port: 32769
+2021-10-07 10:56:19,152 INFO  [io.qua.ker.dep.dev.KerberosDevServicesProcessor] (build-18) Dev Services for Kerberos started.
+
+```
+
+`HTTP/localhost` service principal (with a `servicepwd` password) as well as `alice` and `bob` user principals (with passwords equal to their names) are created by default in a default `EXAMPLE.COM` realm.
+
+Different users can be set with a `quarkus.kerberos.devservices.users` map property, for example, `quarkus.kerberos.devservices.users.jduke=theduke`, etc.
+The service principal can be customized with `quarkus.kerberos.service-principal-name`, its password - with `quarkus.kerberos.service-principal-password`, the realm - with either `quarkus.kerberos.devservices.realm` or `quarkus.kerberos.service-principal-realm`.
+
+Now you can set a `KRB5_CONFIG` environment property pointing to the file such as `/tmp/devservices-krb516887219905674106017.conf`, use `kinit` to prepare a ticket granting ticket for a specific user and use the browser or `curl` to test the endpoint. Dedicated link:https://quarkus.io/guides/dev-ui[Dev UI] for Dev Services For Kerberos might be offered in the future as well.
+
+== Testing
+
+You can test this extension with `Dev Services for Kerberos` or link:https://directory.apache.org/[Apache Directory Service].
+
+In both cases add the following dependency:
+
+```xml
+<dependency>
+   <groupId>io.quarkiverse.kerberos</groupId>
+   <artifactId>quarkus-kerberos-test-util</artifactId>
+   <version>${version.quarkus.kerberos.test.util}</version>
+   <scope>test</scope>
+</dependency>
+
+```
+
+=== With Dev Services
+
+You can write the test code like this when using Dev Services:
+
+```java
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+
+import io.quarkiverse.kerberos.test.utils.KerberosTestClient;
+import io.restassured.RestAssured;
+
+public class SpnegoAuthenticationTestCase {
+    public static final String WWW_AUTHENTICATE = "WWW-Authenticate";
+    public static final String NEGOTIATE = "Negotiate";
+
+    KerberosTestClient kerberosTestClient = new KerberosTestClient();
+
+    @Test
+    public void testSpnegoSuccess() throws Exception {
+
+        var header = RestAssured.get("/identity")
+                .then().statusCode(401).extract().header(WWW_AUTHENTICATE);
+        assertEquals(NEGOTIATE, header);
+
+        var result = kerberosTestClient.get("/identity", "alice", "alice");
+        result.statusCode(200).body(Matchers.is("alice"));
+    }
+}
+
+```
+
+=== With Apache Directory Service
+
+You can write the same test code you can do with `Dev Services for Kerberos` but you'll also need to add a test resource initializing Apache DS:
+
+```java
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+
+import io.quarkiverse.kerberos.test.utils.KerberosKDCTestResource;
+import io.quarkiverse.kerberos.test.utils.KerberosTestClient;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.restassured.RestAssured;
+
+@QuarkusTestResource(KerberosKDCTestResource.class)
+public class SpnegoAuthenticationTestCase {
+    public static final String WWW_AUTHENTICATE = "WWW-Authenticate";
+    public static final String NEGOTIATE = "Negotiate";
+
+    KerberosTestClient kerberosTestClient = new KerberosTestClient();
+
+    @Test
+    public void testSpnegoSuccess() throws Exception {
+
+        var header = RestAssured.get("/identity")
+                .then().statusCode(401).extract().header(WWW_AUTHENTICATE);
+        assertEquals(NEGOTIATE, header);
+
+        var result = kerberosTestClient.get("/identity", "jduke", "jduke");
+        result.statusCode(200).body(Matchers.is("alice"));
+    }
+}
+```
+
+At the moment only a single `jduke` user is supported when testing with `Apache DS` and `Dev Services for Kerberos` have to be disabled: `quarkus.kerberos.devservices.enabled=false`.
+
 [[extension-configuration-reference]]
 == Extension Configuration Reference
 

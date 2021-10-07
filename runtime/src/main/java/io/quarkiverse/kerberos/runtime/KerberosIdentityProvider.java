@@ -162,7 +162,8 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
                     LOG.debugf("GSS exception: %s", ex.getMessage());
                     throw new AuthenticationCompletionException(ex);
                 } catch (PrivilegedActionException ex) {
-                    LOG.debugf("PrivilegedAction exception: %s", ex.getMessage());
+                    Throwable ex2 = ex.getCause() != null ? ex.getCause() : ex;
+                    LOG.debugf("PrivilegedAction failure: %s", ex2.getMessage());
                     throw new AuthenticationCompletionException(ex);
                 } catch (Throwable ex) {
                     Throwable ex2 = ex.getCause() != null ? ex.getCause() : ex;

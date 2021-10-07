@@ -81,12 +81,12 @@ public class KerberosDevServicesProcessor {
         DevServicesConfig currentDevServicesConfiguration = config.devservices;
         // Figure out if we need to shut down and restart any existing Kerberos container
         // if not and the Kerberos container has already started we just return
-        boolean restartRequired = false;
+        boolean restartRequired = !currentDevServicesConfiguration.equals(capturedDevServicesConfiguration);
+        if (!restartRequired) {
+            return existingDevServiceConfig;
+        }
+        ;
         if (closeables != null) {
-            restartRequired = !currentDevServicesConfiguration.equals(capturedDevServicesConfiguration);
-            if (!restartRequired) {
-                return existingDevServiceConfig;
-            }
             for (Closeable closeable : closeables) {
                 try {
                     closeable.close();

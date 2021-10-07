@@ -1,6 +1,6 @@
 # Quarkus - Kerberos
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 _Add Kerberos authentication support to Quarkus for HTTP requests_
@@ -29,6 +29,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://github.com/cescoffier"><img src="https://avatars.githubusercontent.com/u/402301?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Clement Escoffier</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-kerberos/commits?author=cescoffier" title="Code">💻</a> <a href="#maintenance-cescoffier" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/sberyozkin"><img src="https://avatars.githubusercontent.com/u/467639?v=4?s=100" width="100px;" alt=""/><br /><sub><b>sberyozkin</b></sub></a><br /><a href="https://github.com/quarkiverse/quarkus-kerberos/commits?author=sberyozkin" title="Code">💻</a> <a href="#maintenance-sberyozkin" title="Maintenance">🚧</a></td>
   </tr>
 </table>
 

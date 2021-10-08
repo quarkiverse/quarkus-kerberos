@@ -9,13 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
-import io.quarkiverse.kerberos.test.utils.KerberosKDCTestResource;
 import io.quarkiverse.kerberos.test.utils.KerberosTestClient;
 import io.quarkus.test.QuarkusDevModeTest;
-import io.quarkus.test.common.QuarkusTestResource;
 import io.restassured.RestAssured;
 
-@QuarkusTestResource(KerberosKDCTestResource.class)
 public class SpnegoAuthenticationDevModeTestCase {
     public static final String NEGOTIATE = "Negotiate";
 
@@ -40,12 +37,12 @@ public class SpnegoAuthenticationDevModeTestCase {
                 .header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
         assertEquals(NEGOTIATE, header);
 
-        var result = kerberosTestClient.get("/identity", "jduke", "theduke");
+        var result = kerberosTestClient.get("/identity", "alice", "alice");
         result.statusCode(401);
 
         test.modifyResourceFile("application.properties", s -> s.replace("QUARKUSDEV.IO", "QUARKUS.IO"));
 
-        result = kerberosTestClient.get("/identity", "jduke", "theduke");
-        result.statusCode(200).body(Matchers.is("jduke"));
+        result = kerberosTestClient.get("/identity", "alice", "alice");
+        result.statusCode(200).body(Matchers.is("alice"));
     }
 }

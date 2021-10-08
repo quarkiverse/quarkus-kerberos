@@ -295,8 +295,8 @@ public class SpnegoAuthenticationTestCase {
                 .then().statusCode(401).extract().header(WWW_AUTHENTICATE);
         assertEquals(NEGOTIATE, header);
 
-        var result = kerberosTestClient.get("/identity", "jduke", "jduke");
-        result.statusCode(200).body(Matchers.is("alice"));
+        var result = kerberosTestClient.get("/identity", "jduke", "theduke");
+        result.statusCode(200).body(Matchers.is("jduke"));
     }
 }
 ```

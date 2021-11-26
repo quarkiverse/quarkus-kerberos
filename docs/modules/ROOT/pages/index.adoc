@@ -303,6 +303,18 @@ public class SpnegoAuthenticationTestCase {
 
 At the moment only a single `jduke` user is supported when testing with `Apache DS` and `Dev Services for Kerberos` have to be disabled: `quarkus.kerberos.devservices.enabled=false`.
 
+=== With Browser
+
+You can also configure your browser such as Firefox to use Negotiate Mechanism.
+
+A good summary is provided link:https://support.pingidentity.com/s/article/How-to-configure-supported-browsers-for-Kerberos-NTLM[here].
+
+For example, if you run your application on the `localhost` then add `localhost` (without a port) as the only value to the Firefox `about:config/network.negotiate-auth.trusted-uris` property.
+
+Next, use `kinit` to create a ticket granting ticket (`TGT`) for a selected user principal - the browser will use this `TGT`. If the default Kerberos KDC configuration at `/etc/krb5.conf` is used then you don't even need to restart a browser. If a custom configuration is used then point to it with `KRB5_CONFIG` and either update `~/.bashrc` or laucnch the browser from the shell where `KRB5_CONFIG` is set.
+
+Now open your browser and access the endpoint - the browser will do the negotiation using the created `TGT` without asking for a user name and password.
+
 [[extension-configuration-reference]]
 == Extension Configuration Reference
 

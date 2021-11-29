@@ -311,7 +311,9 @@ A good summary is provided link:https://support.pingidentity.com/s/article/How-t
 
 For example, if you run your application on the `localhost` then add `localhost` (without a port) as the only value to the Firefox `about:config/network.negotiate-auth.trusted-uris` property.
 
-Next, use `kinit` to create a ticket granting ticket (`TGT`) for a selected user principal - the browser will use this `TGT`. If the default Kerberos KDC configuration at `/etc/krb5.conf` is used then you don't even need to restart a browser. If a custom configuration is used then point to it with `KRB5_CONFIG` and either update `~/.bashrc` or laucnch the browser from the shell where `KRB5_CONFIG` is set.
+Next, use `kinit` to create a ticket granting ticket (`TGT`) for a selected user principal for the browser to use this `TGT`. Make sure `kinit` sees the same Kerberos KDC configuration which the browser will see for both `kinit` (and other Kerberos tools) and the browser to work with the same Kerberos KDC instance.
+
+If the default Kerberos KDC configuration at `/etc/krb5.conf` is used then you don't even need to restart a browser. If a custom Kerberos KDC configuration is used by `kinit` then point to it with `KRB5_CONFIG` and either update `~/.bashrc` or launch the browser from the shell where `KRB5_CONFIG` is set.
 
 Now open your browser and access the endpoint - the browser will do the negotiation using the created `TGT` without asking for a user name and password.
 

@@ -14,6 +14,7 @@
   <modules>
     <module>deployment</module>
     <module>runtime</module>
+    <module>client</module>
     <module>test-util</module>
   </modules>
   <properties>
@@ -38,6 +39,11 @@
       <dependency>
         <groupId>io.quarkiverse.kerberos</groupId>
         <artifactId>quarkus-kerberos</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.quarkiverse.kerberos</groupId>
+        <artifactId>quarkus-kerberos-client</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

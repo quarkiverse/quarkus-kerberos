@@ -19,7 +19,7 @@ public class IdentityResource {
     KerberosPrincipal kerberosPrincipal;
 
     @GET
-    public String get() {
+    public String getIdentity() {
         return securityIdentity.getPrincipal().getName() + " " + kerberosPrincipal.getFullName() + " "
                 + kerberosPrincipal.getRealm();
     }

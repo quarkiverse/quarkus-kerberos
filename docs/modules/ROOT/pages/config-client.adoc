@@ -1,0 +1,84 @@
+//
+// This content is generated using mvn compile and copied manually to here
+//
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[[kerberos-client_configuration]]link:#kerberos-client_configuration[Configuration property]
+
+h|Type
+h|Default
+
+a| [[kerberos-client_kerberos-client.login-context-name]]`link:#kerberos-client_kerberos-client.login-context-name[kerberos-client.login-context-name]`
+
+[.description]
+--
+JAAS Login context name. If it is not set then the JAAS configuration will be created automatically otherwise a JAAS configuration file must be available and contain an entry matching its value - in this case use `java.security.auth.login.config` system property pointing to this file.
+--|string
+|
+
+
+a| [[kerberos-client_kerberos-client.debug]]`link:#kerberos-client_kerberos-client.debug[kerberos-client.debug]`
+
+[.description]
+--
+Specifies if a JAAS configuration `debug` property should be enabled. This property is only effective when `loginContextName` is not set and the JAAS configuration is created automatically.
+--|boolean
+|`false`
+
+
+a| [[kerberos-client_kerberos-client.keytab-path]]`link:#kerberos-client_kerberos-client.keytab-path[kerberos-client.keytab-path]`
+
+[.description]
+--
+User principal keytab file path which will be used to set a JAAS configuration `keyTab` property. This property is only effective when `loginContextName` is not set and the JAAS configuration is created automatically.
+--|string
+|
+
+
+a| [[kerberos-client_kerberos-client.use-spnego-oid]]`link:#kerberos-client_kerberos-client.use-spnego-oid[kerberos-client.use-spnego-oid]`
+
+[.description]
+--
+Specifies if an `Spnego` authentication mechanism object identifier (`OID`) should be used for creating a `GSSContext`. A `Kerberos` `OID` will be used if this property is set to `false`.
+--|boolean
+|`true`
+
+
+a| [[kerberos-client_kerberos-client.service-principal-name]]`link:#kerberos-client_kerberos-client.service-principal-name[kerberos-client.service-principal-name]`
+
+[.description]
+--
+Kerberos Service Principal Name.
+--|string
+|`HTTP/localhost`
+
+
+a| [[kerberos-client_kerberos-client.user-principal-name]]`link:#kerberos-client_kerberos-client.user-principal-name[kerberos-client.user-principal-name]`
+
+[.description]
+--
+Kerberos User Principal Name. It is a required property.
+--|string
+|
+
+
+a| [[kerberos-client_kerberos-client.user-principal-realm]]`link:#kerberos-client_kerberos-client.user-principal-realm[kerberos-client.user-principal-realm]`
+
+[.description]
+--
+Kerberos User Principal Realm Name. If this property is set then it will be added to the user principal name, for example, `alice@SERVICE-REALM.COM`. Setting the realm property is not required if it matches a default realm set in the Kerberos Key Distribution Center (KDC) configuration.
+--|string
+|
+
+a| [[kerberos-client_client.kerberos-client.user-principal-password]]`link:#kerberos-client_kerberos-client.user-principal-password[kerberos-client.user-principal-password]`
+
+[.description]
+--
+Kerberos User Principal Password. Set this property only if using the `keytabPath`, custom `CallbackHandler` or `UserPrincipalSubjectFactory` is not possible.
+--|string
+|
+
+|===

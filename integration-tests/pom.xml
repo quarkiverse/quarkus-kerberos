@@ -29,6 +29,10 @@
     </dependency>
     <dependency>
       <groupId>io.quarkiverse.kerberos</groupId>
+      <artifactId>quarkus-kerberos-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkiverse.kerberos</groupId>
       <artifactId>quarkus-kerberos-test-util</artifactId>
     </dependency>
   </dependencies>

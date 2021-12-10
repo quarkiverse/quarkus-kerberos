@@ -321,3 +321,241 @@ Now open your browser and access the endpoint - the browser will do the negotiat
 == Extension Configuration Reference
 
 include::config.adoc[leveloffset=+1, opts=optional]
+
+== Client Support
+
+In your `pom.xml` file, add:
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.quarkiverse.kerberos</groupId>
+    <artifactId>quarkus-kerberos-client</artifactId>
+</dependency>
+----
+
+This module provides the utility code which can be used to add Kerberos service tickets as HTTP `Authorization` `Negotiate` scheme values. It can be done with the help of the JAX-RS `KerberosClientRequestFilter` or directly in the application code.
+
+Using this module can be useful when a Quarkus endpoint has to make an outbound call to a remote service requiring Kerberos `Negotiate` Authentication.
+
+For example, lets assume your `FrontendService` application has to call to the remote `IdentityService`:
+
+[source,java]
+----
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+
+import io.quarkiverse.kerberos.KerberosPrincipal;
+import io.quarkus.security.Authenticated;
+import io.quarkus.security.identity.SecurityIdentity;
+
+@Path("identity")
+@Authenticated
+public class IdentityService {
+
+    @Inject
+    SecurityIdentity securityIdentity;
+
+    @Inject
+    KerberosPrincipal kerberosPrincipal;
+
+    @GET
+    public String getIdentity() {
+        return securityIdentity.getPrincipal().getName() + " " + kerberosPrincipal.getFullName() + " "
+                + kerberosPrincipal.getRealm();
+    }
+}
+----
+
+Next you can implement `FrontendService`.
+
+[[kerberos-client-request-filter]]
+=== KerberosClientRequestFilter
+
+First MP RestClient `IdentityServiceClient` interface has to be created and `KerberosClientRequestFilter` registered: 
+
+[source,java]
+----
+package io.quarkiverse.kerberos.it;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+
+import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+
+import io.quarkiverse.kerberos.client.KerberosClientRequestFilter;
+
+@RegisterRestClient
+@RegisterProvider(KerberosClientRequestFilter.class)
+@Path("/")
+public interface IdentityServiceClientWithFilter {
+
+    @GET
+    String getIdentity();
+}
+----
+ 
+Now `FrontendService` will look like this
+
+[source,java]
+----
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+@Path("frontend")
+public class FrontendResource {
+ 
+    @Inject
+    @RestClient
+    IdentityServiceClientWithFilter identityServiceClientWithFilter;
+
+    @GET
+    @Path("with-filter")
+    public String getIdentityWithSimpleNegotiationInFilter() {
+        return identityServiceClientWithFilter.getIdentity();
+    }
+}
+----
+
+Configure the application like this:
+
+[source,properties]
+----
+io.quarkiverse.kerberos.it.IdentityServiceClientWithFilter/mp-rest/url=http://localhost:8081/identity
+
+kerberos-client.user-principal-name=jduke
+kerberos-client.user-principal-password=theduke
+----
+
+[[kerberos-client-support]]
+=== KerberosClientSupport
+
+If necessary you can use `KerberosClientSupport` directly in the application, for example:
+
+[source,java]
+----
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
+import io.quarkiverse.kerberos.client.KerberosClientSupport;
+
+@Path("frontend")
+public class FrontendResource {
+    private static final String NEGOTIATE = "Negotiate";
+
+    @Inject
+    @RestClient
+    IdentityServiceClient identityServiceClient;
+
+    @Inject
+    KerberosClientSupport kerberosClientSupport;
+
+    @GET
+    @Path("with-simple-negotiation")
+    public String getIdentityWithSimpleSimpleNegotiation() throws Exception {
+        return identityServiceClient.getIdentity(NEGOTIATE + " " + kerberosClientSupport.getServiceTicket());
+    }
+}
+----
+
+Note `IdentityServiceClient` does not have `KerberosClientRequestFilter` registered but instead has a `HeaderParam`:
+
+[source,java]
+----
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+
+import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+
+@RegisterRestClient
+@Path("/")
+public interface IdentityServiceClient {
+
+    @GET
+    String getIdentity(@HeaderParam("Authorization") String serviceTicket);
+}
+----
+
+=== Multi Step Negotiation
+
+Note that a single step `Negotiation` is shown in both <<kerberos-client-request-filter, KerberosClientRequestFilter>> and <<kerberos-client-support, KerberosClientSupport>> sections.
+
+Single step `Negotiation` should work for many practical cases however the `Negotiate` protocol may involve more than one exchange between the client and the server before a service ticket can be acquired. If you have to deal with such cases then you can write the application code as follows:
+
+[source,java]
+----
+import java.security.PrivilegedExceptionAction;
+import java.util.Base64;
+
+import javax.inject.Inject;
+import javax.security.auth.Subject;
+import javax.ws.rs.GET;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.HttpHeaders;
+
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.ietf.jgss.GSSContext;
+
+import io.quarkiverse.kerberos.client.KerberosClientSupport;
+
+@Path("frontend")
+public class FrontendResource {
+    private static final String NEGOTIATE = "Negotiate";
+
+    @Inject
+    @RestClient
+    IdentityServiceClient identityServiceClient;
+
+    @Inject
+    KerberosClientSupport kerberosClientSupport;
+
+    @GET
+    @Path("with-multi-step-negotiation")
+    public String getIdentityWithMultiStepNegotiation() throws Exception {
+        return Subject.doAs(kerberosClientSupport.getUserPrincipalSubject(), new IdentityServiceAction());
+    }
+
+    private class IdentityServiceAction implements PrivilegedExceptionAction<String> {
+
+        @Override
+        public String run() throws Exception {
+            GSSContext serviceContext = kerberosClientSupport.createServiceContext();
+
+            byte[] tokenBytes = new byte[0];
+
+            while (!serviceContext.isEstablished()) {
+                try {
+                    return identityServiceClient.getIdentity(
+                            NEGOTIATE + " " + kerberosClientSupport.getNegotiateToken(serviceContext, tokenBytes));
+                } catch (NotAuthorizedException ex) {
+                    String header = ex.getResponse().getHeaderString(HttpHeaders.WWW_AUTHENTICATE);
+                    if (header != null && header.length() > NEGOTIATE.length() + 1) {
+                        tokenBytes = Base64.getDecoder().decode(header.substring(NEGOTIATE.length() + 1));
+                        continue;
+                    }
+                    throw ex;
+                }
+            }
+            throw new RuntimeException("Kerberos ticket can not be created");
+        }
+    };
+}
+----
+
+Note if the remote service requires the negotiation to continue then a new token is acquired and a new request is made to the remote service.
+
+=== Configuration
+
+Configuring `KerberosClientSupport` is similar to the way Kerberos support is configured on the server, see the configuration reference below.
+
+include::config-client.adoc[leveloffset=+1, opts=optional]

@@ -83,7 +83,7 @@ public class KerberosTestClient {
                 }
             });
         } catch (Exception ex) {
-            fail(String.format("Unexpected exception: ", ex.getMessage()));
+            fail(String.format("Unexpected exception: ", ex.getMessage()), ex);
         }
         return null;
     }

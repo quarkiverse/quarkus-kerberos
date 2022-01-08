@@ -72,7 +72,7 @@ public class KerberosDevServicesProcessor {
 
     @BuildStep(onlyIfNot = IsNormal.class, onlyIf = { IsEnabled.class, GlobalDevServicesConfig.Enabled.class })
     public KerberosDevServicesConfigBuildItem startKerberosContainer(
-            Optional<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
+            List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
             BuildProducer<DevServicesConfigResultBuildItem> devServices,
             KerberosBuildTimeConfig config,
             LaunchModeBuildItem launchMode,
@@ -101,7 +101,7 @@ public class KerberosDevServicesProcessor {
         capturedDevServicesConfiguration = currentDevServicesConfiguration;
         StartResult startResult;
         try {
-            startResult = startContainer(devServicesSharedNetworkBuildItem.isPresent(), restartRequired);
+            startResult = startContainer(!devServicesSharedNetworkBuildItem.isEmpty(), restartRequired);
             if (startResult == null) {
                 return null;
             }

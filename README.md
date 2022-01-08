@@ -3,6 +3,8 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
+[![Version](https://img.shields.io/maven-central/v/io.quarkiverse.kerberos/quarkus-kerberos?logo=apache-maven&style=flat-square)](https://search.maven.org/artifact/io.quarkiverse.kerberos/quarkus-kerberos)
+
 _Add Kerberos authentication support to Quarkus for HTTP requests_
 
 This project extends Quarkus HTTP security and adds support for [Kerberos](https://www.kerberos.org/software/tutorial.html). 

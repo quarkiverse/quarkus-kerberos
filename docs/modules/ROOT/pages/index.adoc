@@ -217,6 +217,18 @@ The service principal can be customized with `quarkus.kerberos.service-principal
 
 Now you can set a `KRB5_CONFIG` environment property pointing to the file such as `/tmp/devservices-krb516887219905674106017.conf`, use `kinit` to prepare a ticket granting ticket for a specific user and use the browser or `curl` to test the endpoint. Dedicated link:https://quarkus.io/guides/dev-ui[Dev UI] for Dev Services For Kerberos might be offered in the future as well.
 
+== Debugging
+
+Please enable a trace logging level for `io.quarkiverse.kerberos.runtime.KerberosIdentityProvider` in order to see the log messages reported by this `IdentityProvider`:
+
+[source,properties]
+----
+quarkus.log.category."io.quarkiverse.kerberos.runtime.KerberosIdentityProvider".level=TRACE
+quarkus.log.category."io.quarkiverse.kerberos.runtime.KerberosIdentityProvider".min-level=TRACE
+----
+
+Also, if you would like to see the debug messages reported by the Kerberos system itself then make sure that `quarkus.kerberos.debug` is set to true if the JAAS context is auto-generated or `debug` is set to `true` in a custom JAAS context file.
+
 == Testing
 
 You can test this extension with `Dev Services for Kerberos` or link:https://directory.apache.org/[Apache Directory Service].

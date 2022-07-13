@@ -8,7 +8,7 @@ metadata:
     - "negotiate"
   categories:
     - "security"
-  status: "experimental"
+  status: "preview"
   config:
     - "quarkus.kerberos."
  

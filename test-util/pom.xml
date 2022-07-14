@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.quarkiverse.kerberos</groupId>
         <artifactId>quarkus-kerberos-parent</artifactId>
-        <version>0.7.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>quarkus-kerberos-test-util</artifactId>
     <name>Quarkus - Kerberos - Test Util</name>

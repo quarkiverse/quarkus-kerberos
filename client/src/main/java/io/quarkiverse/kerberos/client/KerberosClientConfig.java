@@ -16,7 +16,7 @@ public interface KerberosClientConfig {
      * If this property is not set then the JAAS configuration will be created automatically
      * otherwise a JAAS configuration file must be available and contain an entry matching its value.
      * Use 'java.security.auth.login.config' system property to point to this JAAS configuration file.
-     * 
+     *
      * Note this property will be ignored if a custom {@link io.quarkiverse.kerberos.client.UserPrincipalSubjectFactory} is
      * registered and creates a non-null client Subject.
      */

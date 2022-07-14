@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - "main"
+      - "quarkus-2.2"
     paths-ignore:
       - '.gitignore'
       - 'CODEOWNERS'

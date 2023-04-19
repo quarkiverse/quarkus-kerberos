@@ -1,8 +1,9 @@
 package io.quarkiverse.kerberos.test.utils;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
+
+import jakarta.enterprise.context.ApplicationScoped;
 
 import io.quarkiverse.kerberos.ServicePrincipalSubjectFactory;
 

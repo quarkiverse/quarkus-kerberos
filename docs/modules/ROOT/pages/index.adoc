@@ -76,7 +76,7 @@ In many cases all you will need is to ensure the service principal password or i
 If you haven't created a keytab just yet then you can register a custom callback handler, for example:
 
 ```java
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -126,10 +126,10 @@ If the `KDC` configuration has no default realm configured then a service princi
 You can access a user principal in the service code once the authentication has been completed, for example:
 
 ```java
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 
 import io.quarkiverse.kerberos.KerberosPrincipal;
 
@@ -170,7 +170,7 @@ The extension will use `javax.security.auth.login.LoginContext` to create a `Sub
 You can customize this process by registering a custom `io.quarkiverse.kerberos.ServicePrincipalSubjectFactory`:
 
 ```java
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import javax.security.auth.Subject;
 import io.quarkiverse.kerberos.ServicePrincipalSubjectFactory;
 
@@ -354,9 +354,9 @@ For example, lets assume your `FrontendService` application has to call to the r
 
 [source,java]
 ----
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 import io.quarkiverse.kerberos.KerberosPrincipal;
 import io.quarkus.security.Authenticated;
@@ -391,8 +391,8 @@ First MP RestClient `IdentityServiceClient` interface has to be created and `Ker
 ----
 package io.quarkiverse.kerberos.it;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
@@ -413,9 +413,9 @@ Now `FrontendService` will look like this
 
 [source,java]
 ----
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -451,9 +451,9 @@ If necessary you can use `KerberosClientSupport` directly in the application, fo
 
 [source,java]
 ----
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -482,9 +482,9 @@ Note `IdentityServiceClient` does not have `KerberosClientRequestFilter` registe
 
 [source,java]
 ----
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.Path;
 
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
@@ -508,12 +508,12 @@ Single step `Negotiation` should work for many practical cases however the `Nego
 import java.security.PrivilegedExceptionAction;
 import java.util.Base64;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.security.auth.Subject;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.ietf.jgss.GSSContext;

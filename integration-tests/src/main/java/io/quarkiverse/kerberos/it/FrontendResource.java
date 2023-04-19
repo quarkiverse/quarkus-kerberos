@@ -3,12 +3,13 @@ package io.quarkiverse.kerberos.it;
 import java.security.PrivilegedExceptionAction;
 import java.util.Base64;
 
-import javax.inject.Inject;
 import javax.security.auth.Subject;
-import javax.ws.rs.GET;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.HttpHeaders;
+
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.NotAuthorizedException;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.ietf.jgss.GSSContext;

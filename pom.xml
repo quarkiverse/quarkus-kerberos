@@ -18,7 +18,7 @@
     <module>test-util</module>
   </modules>
   <scm>
-    <connection>:git:git@github.com:quarkiverse/quarkus-kerberos.git</connection>
+    <connection>scm:git:git@github.com:quarkiverse/quarkus-kerberos.git</connection>
     <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-kerberos.git</developerConnection>
     <url>https://github.com/quarkiverse/quarkus-kerberos</url>
   </scm>

@@ -17,6 +17,11 @@
     <module>client</module>
     <module>test-util</module>
   </modules>
+  <scm>
+    <connection>scm:git:git@github.com:quarkiverse/quarkus-kerberos.git</connection>
+    <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-kerberos.git</developerConnection>
+    <url>https://github.com/quarkiverse/quarkus-kerberos</url>
+  </scm>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>

@@ -305,7 +305,7 @@ public class KerberosDevServicesProcessor {
             withEnv("KRB5_REALM", getRealm());
             withEnv("KRB5_KDC", "localhost");
             withEnv("KRB5_PASS", "mypass");
-            waitingFor(Wait.forLogMessage("Principal \"admin/admin@" + getRealm() + "\" created.*", 1));
+            waitingFor(Wait.forLogMessage(".* running without any HTTP authentication checking.*", 1));
 
             if (javaOpts.isPresent()) {
                 addEnv(JAVA_OPTS, javaOpts.get());

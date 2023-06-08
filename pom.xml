@@ -8,7 +8,7 @@
   </parent>
   <groupId>io.quarkiverse.kerberos</groupId>
   <artifactId>quarkus-kerberos-parent</artifactId>
-  <version>999-SNAPSHOT</version>
+  <version>2.1.0</version>
   <packaging>pom</packaging>
   <name>Quarkus - Kerberos - Parent</name>
   <modules>
@@ -21,6 +21,7 @@
     <connection>scm:git:git@github.com:quarkiverse/quarkus-kerberos.git</connection>
     <developerConnection>scm:git:git@github.com:quarkiverse/quarkus-kerberos.git</developerConnection>
     <url>https://github.com/quarkiverse/quarkus-kerberos</url>
+    <tag>2.1.0</tag>
   </scm>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>

@@ -1,5 +1,5 @@
 name: quarkus-kerberos
-title: Quarkus Kerberos
+title: Kerberos
 version: dev
 nav:
   - modules/ROOT/nav.adoc

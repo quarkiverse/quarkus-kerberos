@@ -148,7 +148,7 @@ public class KerberosKDCTestResource implements QuarkusTestResourceLifecycleMana
                         baos.write(second);
                         baos.write(substitute.toByteArray()); // Terminator never found.
                     }
-                    String toReplace = new String(substitute.toByteArray(), StandardCharsets.UTF_8);
+                    String toReplace = substitute.toString(StandardCharsets.UTF_8);
                     if (mappings.containsKey(toReplace)) {
                         baos.write(mappings.get(toReplace).getBytes());
                     } else {

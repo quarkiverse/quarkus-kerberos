@@ -49,22 +49,23 @@ public class KerberosTestClient {
                             ValidatableResponse result = RestAssured.given()
                                     .header(HttpHeaderNames.AUTHORIZATION.toString(),
                                             NEGOTIATE + " " + Base64.getEncoder().encodeToString(token))
-                                    .get(path).then();
+                                    .get(path).then()
+                                    .log().all();
 
                             if (result.extract().statusCode() == 200) {
                                 return result;
                             } else if (result.extract().statusCode() == 401) {
                                 String header = result.extract().header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
                                 if (header != null) {
-                                    if (header.length() > NEGOTIATE.toString().length() + 1) {
+                                    if (header.length() > NEGOTIATE.length() + 1) {
                                         // Negotiation continues
 
                                         byte[] headerBytes = header.getBytes(StandardCharsets.US_ASCII);
                                         // FlexBase64.decode() returns byte buffer, which can contain backend array of greater size.
                                         // when on such ByteBuffer is called array(), it returns the underlying byte array including the 0 bytes
-                                        // at the end, which makes the token invalid. => using Base64 mime decoder, which returnes directly properly sized byte[].
+                                        // at the end, which makes the token invalid. => using Base64 mime decoder, which returns directly properly sized byte[].
                                         token = Base64.getMimeDecoder().decode(
-                                                ArrayUtils.subarray(headerBytes, NEGOTIATE.toString().length() + 1,
+                                                ArrayUtils.subarray(headerBytes, NEGOTIATE.length() + 1,
                                                         headerBytes.length));
                                     } else {
                                         fail("Negotiation data has not been returned with WWW-Authenticate");

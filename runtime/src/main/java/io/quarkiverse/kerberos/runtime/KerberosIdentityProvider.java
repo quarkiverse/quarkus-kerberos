@@ -157,18 +157,18 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
                         throw new AuthenticationFailedException();
                     }
                 } catch (LoginException ex) {
-                    LOG.debugf("Login exception: %s", ex.getMessage());
+                    LOG.debugf(ex, "Login exception: %s", ex.getMessage());
                     throw new AuthenticationCompletionException(ex);
                 } catch (GSSException ex) {
-                    LOG.debugf("GSS exception: %s", ex.getMessage());
+                    LOG.debugf(ex, "GSS exception: %s", ex.getMessage());
                     throw new AuthenticationCompletionException(ex);
                 } catch (PrivilegedActionException ex) {
                     Throwable ex2 = ex.getCause() != null ? ex.getCause() : ex;
-                    LOG.debugf("PrivilegedAction failure: %s", ex2.getMessage());
+                    LOG.debugf(ex2, "PrivilegedAction failure: %s", ex2.getMessage());
                     throw new AuthenticationCompletionException(ex);
                 } catch (Throwable ex) {
                     Throwable ex2 = ex.getCause() != null ? ex.getCause() : ex;
-                    LOG.debugf("Authentication failure: %s", ex2.getMessage());
+                    LOG.debugf(ex2, "Authentication failure: %s", ex2.getMessage());
                     throw new AuthenticationCompletionException(ex2);
                 }
             }

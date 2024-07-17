@@ -8,6 +8,7 @@
   </parent>
   <artifactId>quarkus-kerberos</artifactId>
   <name>Quarkus - Kerberos - Runtime</name>
+  <description>Add Kerberos authentication support to Quarkus for HTTP requests</description>
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>

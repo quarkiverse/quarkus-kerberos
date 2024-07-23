@@ -1,0 +1,148 @@
+
+:summaryTableId: kerberos-client
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[[kerberos-client_configuration]]link:#kerberos-client_configuration[Configuration property]
+
+h|Type
+h|Default
+
+a| [[kerberos-client_kerberos-client-login-context-name]]`link:#kerberos-client_kerberos-client-login-context-name[kerberos-client.login-context-name]`
+
+
+[.description]
+--
+JAAS Login context name. If this property is not set then the JAAS configuration will be created automatically otherwise a JAAS configuration file must be available and contain an entry matching its value. Use 'java.security.auth.login.config' system property to point to this JAAS configuration file. Note this property will be ignored if a custom `io.quarkiverse.kerberos.client.UserPrincipalSubjectFactory` is registered and creates a non-null client Subject.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++KERBEROS_CLIENT_LOGIN_CONTEXT_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++KERBEROS_CLIENT_LOGIN_CONTEXT_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[kerberos-client_kerberos-client-debug]]`link:#kerberos-client_kerberos-client-debug[kerberos-client.debug]`
+
+
+[.description]
+--
+Specifies if a JAAS configuration 'debug' property should be enabled. Note this property is only effective when `loginContextName` is not set. and the JAAS configuration is created automatically.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++KERBEROS_CLIENT_DEBUG+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++KERBEROS_CLIENT_DEBUG+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[kerberos-client_kerberos-client-keytab-path]]`link:#kerberos-client_kerberos-client-keytab-path[kerberos-client.keytab-path]`
+
+
+[.description]
+--
+Points to a user principal keytab file and will be used to set a JAAS configuration 'keyTab' property. Note this property is only effective when `loginContextName` is not set. and the JAAS configuration is created automatically.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++KERBEROS_CLIENT_KEYTAB_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++KERBEROS_CLIENT_KEYTAB_PATH+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[kerberos-client_kerberos-client-user-principal-name]]`link:#kerberos-client_kerberos-client-user-principal-name[kerberos-client.user-principal-name]`
+
+
+[.description]
+--
+User Principal name.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++KERBEROS_CLIENT_USER_PRINCIPAL_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++KERBEROS_CLIENT_USER_PRINCIPAL_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|required icon:exclamation-circle[title=Configuration property is required]
+
+
+a| [[kerberos-client_kerberos-client-user-principal-realm]]`link:#kerberos-client_kerberos-client-user-principal-realm[kerberos-client.user-principal-realm]`
+
+
+[.description]
+--
+Kerberos User Principal Realm Name. If this property is set then it will be added to the user principal name, for example, "HTTP/localhost@SERVICE-REALM.COM". Setting the realm property is not required if it matches a default realm set in the Kerberos Key Distribution Center (KDC) configuration.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++KERBEROS_CLIENT_USER_PRINCIPAL_REALM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++KERBEROS_CLIENT_USER_PRINCIPAL_REALM+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[kerberos-client_kerberos-client-service-principal-name]]`link:#kerberos-client_kerberos-client-service-principal-name[kerberos-client.service-principal-name]`
+
+
+[.description]
+--
+Service Principal name
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++KERBEROS_CLIENT_SERVICE_PRINCIPAL_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++KERBEROS_CLIENT_SERVICE_PRINCIPAL_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`HTTP/localhost`
+
+
+a| [[kerberos-client_kerberos-client-user-principal-password]]`link:#kerberos-client_kerberos-client-user-principal-password[kerberos-client.user-principal-password]`
+
+
+[.description]
+--
+User principal password. Set this property only if using `keytabPath`, custom `CallbackHandler` or `UserPrincipalSubjectFactory` is not possible.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++KERBEROS_CLIENT_USER_PRINCIPAL_PASSWORD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++KERBEROS_CLIENT_USER_PRINCIPAL_PASSWORD+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[kerberos-client_kerberos-client-use-spnego-oid]]`link:#kerberos-client_kerberos-client-use-spnego-oid[kerberos-client.use-spnego-oid]`
+
+
+[.description]
+--
+Specifies whether to use Spnego or Kerberos OID.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++KERBEROS_CLIENT_USE_SPNEGO_OID+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++KERBEROS_CLIENT_USE_SPNEGO_OID+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+|===

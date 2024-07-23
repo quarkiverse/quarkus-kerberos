@@ -86,18 +86,18 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
             throw new IllegalStateException("Multiple " + ServicePrincipalSubjectFactory.class + " beans registered");
         }
         String realKeytabPath = null;
-        if (kerberosConfig.keytabPath.isPresent()) {
-            URL keytabUrl = Thread.currentThread().getContextClassLoader().getResource(kerberosConfig.keytabPath.get());
+        if (kerberosConfig.keytabPath().isPresent()) {
+            URL keytabUrl = Thread.currentThread().getContextClassLoader().getResource(kerberosConfig.keytabPath().get());
             if (keytabUrl != null) {
                 realKeytabPath = keytabUrl.toString();
             } else {
-                Path filePath = Paths.get(kerberosConfig.keytabPath.get());
+                Path filePath = Paths.get(kerberosConfig.keytabPath().get());
                 if (Files.exists(filePath)) {
                     realKeytabPath = filePath.toAbsolutePath().toString();
                 }
             }
             if (realKeytabPath == null) {
-                throw new ConfigurationException("Keytab file is not available at " + kerberosConfig.keytabPath.get());
+                throw new ConfigurationException("Keytab file is not available at " + kerberosConfig.keytabPath().get());
             }
         }
         this.realKeytabPath = realKeytabPath;
@@ -185,7 +185,7 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
             }
         }
 
-        String loginContextName = kerberosConfig.loginContextName.orElse(DEFAULT_LOGIN_CONTEXT_NAME);
+        String loginContextName = kerberosConfig.loginContextName().orElse(DEFAULT_LOGIN_CONTEXT_NAME);
         Configuration config = DEFAULT_LOGIN_CONTEXT_NAME.equals(loginContextName)
                 ? new DefaultJAASConfiguration(completeServicePrincipalName)
                 : null;
@@ -202,16 +202,16 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
         if (callbackHandler.isResolvable()) {
             return callbackHandler.get();
         }
-        if (kerberosConfig.servicePrincipalPassword.isPresent()) {
+        if (kerberosConfig.servicePrincipalPassword().isPresent()) {
             return new UsernamePasswordCBH(completeServicePrincipalName,
-                    kerberosConfig.servicePrincipalPassword.get().toCharArray());
+                    kerberosConfig.servicePrincipalPassword().get().toCharArray());
         }
         return null;
     }
 
     protected GSSContext createGSSContext(RoutingContext routingContext, String completeServicePrincipalName)
             throws GSSException {
-        Oid oid = new Oid(kerberosConfig.useSpnegoOid ? SPNEGO_OID : KERBEROS_OID);
+        Oid oid = new Oid(kerberosConfig.useSpnegoOid() ? SPNEGO_OID : KERBEROS_OID);
 
         GSSManager gssManager = GSSManager.getInstance();
         if (gssManager == null) {
@@ -223,15 +223,15 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
     }
 
     protected String getCompleteServicePrincipalName(RoutingContext routingContext) {
-        String name = kerberosConfig.servicePrincipalName.isEmpty()
+        String name = kerberosConfig.servicePrincipalName().isEmpty()
                 ? "HTTP/" + routingContext.request().host()
-                : kerberosConfig.servicePrincipalName.get();
+                : kerberosConfig.servicePrincipalName().get();
         int portIndex = name.indexOf(":");
         if (portIndex > 0) {
             name = name.substring(0, portIndex);
         }
-        if (kerberosConfig.servicePrincipalRealm.isPresent()) {
-            name += "@" + kerberosConfig.servicePrincipalRealm.get();
+        if (kerberosConfig.servicePrincipalRealm().isPresent()) {
+            name += "@" + kerberosConfig.servicePrincipalRealm().get();
         }
         return name;
     }
@@ -265,7 +265,7 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
             // See https://docs.oracle.com/javase/8/docs/jre/api/security/jaas/spec/com/sun/security/auth/module/Krb5LoginModule.html
             AppConfigurationEntry[] entries = new AppConfigurationEntry[1];
             Map<String, Object> options = new HashMap<>();
-            if (kerberosConfig.debug) {
+            if (kerberosConfig.debug()) {
                 options.put("debug", "true");
             }
             options.put("refreshKrb5Config", "true");

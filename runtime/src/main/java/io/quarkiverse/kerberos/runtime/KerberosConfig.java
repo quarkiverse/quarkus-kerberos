@@ -2,12 +2,14 @@ package io.quarkiverse.kerberos.runtime;
 
 import java.util.Optional;
 
-import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
 
-@ConfigRoot(name = "kerberos", phase = ConfigPhase.RUN_TIME)
-public class KerberosConfig {
+@ConfigMapping(prefix = "quarkus.kerberos")
+@ConfigRoot(phase = ConfigPhase.RUN_TIME)
+public interface KerberosConfig {
 
     /**
      * JAAS Login context name.
@@ -19,32 +21,29 @@ public class KerberosConfig {
      * Note this property will be ignored if a custom {@link io.quarkiverse.kerberos.ServicePrincipalSubjectFactory} is
      * registered, and it creates a non-null service Subject for the current authentication request.
      */
-    @ConfigItem
-    public Optional<String> loginContextName;
+    Optional<String> loginContextName();
 
     /**
      * Specifies if a JAAS configuration 'debug' property should be enabled.
      * Note this property is only effective when {@code loginContextName} is not set.
      * and the JAAS configuration is created automatically.
      */
-    @ConfigItem(defaultValue = "false")
-    public boolean debug;
+    @WithDefault("false")
+    boolean debug();
 
     /**
      * Points to a service principal keytab file and will be used to set a JAAS configuration 'keyTab' property.
      * Note this property is only effective when {@code loginContextName} is not set.
      * and the JAAS configuration is created automatically.
      */
-    @ConfigItem
-    public Optional<String> keytabPath;
+    Optional<String> keytabPath();
 
     /**
      * Kerberos Service Principal Name.
      * If this property is not set then the service principal name will be calculated by
      * concatenating "HTTP/" and the HTTP Host header value, for example: "HTTP/localhost".
      */
-    @ConfigItem
-    public Optional<String> servicePrincipalName;
+    Optional<String> servicePrincipalName();
 
     /**
      * Kerberos Service Principal Realm Name.
@@ -52,20 +51,18 @@ public class KerberosConfig {
      * "HTTP/localhost@SERVICE-REALM.COM". Setting the realm property is not required if it matches
      * a default realm set in the Kerberos Key Distribution Center (KDC) configuration.
      */
-    @ConfigItem
-    public Optional<String> servicePrincipalRealm;
+    Optional<String> servicePrincipalRealm();
 
     /**
      * Service principal password.
      * Set this property only if using {@code keytabPath}, custom {@linkplain CallbackHandler} or
      * {@linkplain ServicePrincipalSubjectFactory} is not possible.
      */
-    @ConfigItem
-    public Optional<String> servicePrincipalPassword;
+    Optional<String> servicePrincipalPassword();
 
     /**
      * Specifies whether to use Spnego or Kerberos OID.
      */
-    @ConfigItem(defaultValue = "true")
-    public boolean useSpnegoOid;
+    @WithDefault("true")
+    boolean useSpnegoOid();
 }

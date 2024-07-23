@@ -16,6 +16,7 @@
     <module>runtime</module>
     <module>client</module>
     <module>test-util</module>
+    <module>docs</module>
   </modules>
   <scm>
     <connection>scm:git:git@github.com:quarkiverse/quarkus-kerberos.git</connection>

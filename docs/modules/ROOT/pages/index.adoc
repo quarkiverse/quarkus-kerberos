@@ -1,5 +1,8 @@
 = Quarkus - Kerberos
+
+include::./includes/attributes.adoc[]
 :extension-status: preview
+:diataxis-type: reference
 
 == Introduction
 
@@ -19,6 +22,7 @@ In your `pom.xml` file, add:
 <dependency>
     <groupId>io.quarkiverse.kerberos</groupId>
     <artifactId>quarkus-kerberos</artifactId>
+    <version>{project-version}</version>
 </dependency>
 ----
 
@@ -332,7 +336,7 @@ Now open your browser and access the endpoint - the browser will do the negotiat
 [[extension-configuration-reference]]
 == Extension Configuration Reference
 
-include::config.adoc[leveloffset=+1, opts=optional]
+include::includes/quarkus-kerberos.adoc[leveloffset=+1, opts=optional]
 
 == Client Support
 
@@ -570,4 +574,4 @@ Note if the remote service requires the negotiation to continue then a new token
 
 Configuring `KerberosClientSupport` is similar to the way Kerberos support is configured on the server, see the configuration reference below.
 
-include::config-client.adoc[leveloffset=+1, opts=optional]
+include::includes/kerberos-client.adoc[leveloffset=+1, opts=optional]

@@ -1,0 +1,276 @@
+
+:summaryTableId: quarkus-kerberos
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[[quarkus-kerberos_configuration]]link:#quarkus-kerberos_configuration[Configuration property]
+
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-kerberos_quarkus-kerberos-enabled]]`link:#quarkus-kerberos_quarkus-kerberos-enabled[quarkus.kerberos.enabled]`
+
+
+[.description]
+--
+If the Kerberos extension is enabled.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-kerberos_quarkus-kerberos-devservices-enabled]]`link:#quarkus-kerberos_quarkus-kerberos-devservices-enabled[quarkus.kerberos.devservices.enabled]`
+
+
+[.description]
+--
+If DevServices has been explicitly enabled or disabled.
+
+When DevServices is enabled Quarkus will attempt to automatically configure and start Kerberos when running in Dev or Test mode and when Docker is running.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_DEVSERVICES_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_DEVSERVICES_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-kerberos_quarkus-kerberos-devservices-image-name]]`link:#quarkus-kerberos_quarkus-kerberos-devservices-image-name[quarkus.kerberos.devservices.image-name]`
+
+
+[.description]
+--
+The container image name to use, for container based DevServices providers. See https://github.com/kerberos-io/kerberos-docker.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_DEVSERVICES_IMAGE_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_DEVSERVICES_IMAGE_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`gcavalcante8808/krb5-server`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-kerberos_quarkus-kerberos-devservices-shared]]`link:#quarkus-kerberos_quarkus-kerberos-devservices-shared[quarkus.kerberos.devservices.shared]`
+
+
+[.description]
+--
+Indicates if the Kerberos container managed by Quarkus Dev Services is shared. When shared, Quarkus looks for running containers using label-based service discovery. If a matching container is Kerberos, it is used, and so a second one is not started. Otherwise, Dev Services for Kerberos starts a new container.
+
+The discovery uses the `quarkus-dev-service-label` label. The value is configured using the `service-name` property.
+
+Container sharing is only used in dev mode.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_DEVSERVICES_SHARED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_DEVSERVICES_SHARED+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-kerberos_quarkus-kerberos-devservices-service-name]]`link:#quarkus-kerberos_quarkus-kerberos-devservices-service-name[quarkus.kerberos.devservices.service-name]`
+
+
+[.description]
+--
+The value of the `quarkus-dev-service-kerberos` label attached to the started container. This property is used when `shared` is set to `true`. In this case, before starting a container, Dev Services for Kerberos looks for a container with the `quarkus-dev-service-kerberos` label set to the configured value. If found, it will use this container instead of starting a new one. Otherwise it starts a new container with the `quarkus-dev-service-kerberos` label set to the specified value.
+
+Container sharing is only used in dev mode.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_DEVSERVICES_SERVICE_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_DEVSERVICES_SERVICE_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|`quarkus-kerberos`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-kerberos_quarkus-kerberos-devservices-java-opts]]`link:#quarkus-kerberos_quarkus-kerberos-devservices-java-opts[quarkus.kerberos.devservices.java-opts]`
+
+
+[.description]
+--
+The JAVA_OPTS passed to the keycloak JVM
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_DEVSERVICES_JAVA_OPTS+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_DEVSERVICES_JAVA_OPTS+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-kerberos_quarkus-kerberos-devservices-realm]]`link:#quarkus-kerberos_quarkus-kerberos-devservices-realm[quarkus.kerberos.devservices.realm]`
+
+
+[.description]
+--
+The Kerberos realm.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_DEVSERVICES_REALM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_DEVSERVICES_REALM+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-kerberos_quarkus-kerberos-login-context-name]]`link:#quarkus-kerberos_quarkus-kerberos-login-context-name[quarkus.kerberos.login-context-name]`
+
+
+[.description]
+--
+JAAS Login context name. If this property is not set then the JAAS configuration will be created automatically otherwise a JAAS configuration file must be available and contain an entry matching its value. Use 'java.security.auth.login.config' system property to point to this JAAS configuration file. Note this property will be ignored if a custom `io.quarkiverse.kerberos.ServicePrincipalSubjectFactory` is registered, and it creates a non-null service Subject for the current authentication request.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_LOGIN_CONTEXT_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_LOGIN_CONTEXT_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-kerberos_quarkus-kerberos-debug]]`link:#quarkus-kerberos_quarkus-kerberos-debug[quarkus.kerberos.debug]`
+
+
+[.description]
+--
+Specifies if a JAAS configuration 'debug' property should be enabled. Note this property is only effective when `loginContextName` is not set. and the JAAS configuration is created automatically.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_DEBUG+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_DEBUG+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`false`
+
+
+a| [[quarkus-kerberos_quarkus-kerberos-keytab-path]]`link:#quarkus-kerberos_quarkus-kerberos-keytab-path[quarkus.kerberos.keytab-path]`
+
+
+[.description]
+--
+Points to a service principal keytab file and will be used to set a JAAS configuration 'keyTab' property. Note this property is only effective when `loginContextName` is not set. and the JAAS configuration is created automatically.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_KEYTAB_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_KEYTAB_PATH+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-kerberos_quarkus-kerberos-service-principal-name]]`link:#quarkus-kerberos_quarkus-kerberos-service-principal-name[quarkus.kerberos.service-principal-name]`
+
+
+[.description]
+--
+Kerberos Service Principal Name. If this property is not set then the service principal name will be calculated by concatenating "HTTP/" and the HTTP Host header value, for example: "HTTP/localhost".
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_SERVICE_PRINCIPAL_NAME+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_SERVICE_PRINCIPAL_NAME+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-kerberos_quarkus-kerberos-service-principal-realm]]`link:#quarkus-kerberos_quarkus-kerberos-service-principal-realm[quarkus.kerberos.service-principal-realm]`
+
+
+[.description]
+--
+Kerberos Service Principal Realm Name. If this property is set then it will be added to the service principal name, for example, "HTTP/localhost@SERVICE-REALM.COM". Setting the realm property is not required if it matches a default realm set in the Kerberos Key Distribution Center (KDC) configuration.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_SERVICE_PRINCIPAL_REALM+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_SERVICE_PRINCIPAL_REALM+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-kerberos_quarkus-kerberos-service-principal-password]]`link:#quarkus-kerberos_quarkus-kerberos-service-principal-password[quarkus.kerberos.service-principal-password]`
+
+
+[.description]
+--
+Service principal password. Set this property only if using `keytabPath`, custom `CallbackHandler` or `ServicePrincipalSubjectFactory` is not possible.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_SERVICE_PRINCIPAL_PASSWORD+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_SERVICE_PRINCIPAL_PASSWORD+++`
+endif::add-copy-button-to-env-var[]
+--|string 
+|
+
+
+a| [[quarkus-kerberos_quarkus-kerberos-use-spnego-oid]]`link:#quarkus-kerberos_quarkus-kerberos-use-spnego-oid[quarkus.kerberos.use-spnego-oid]`
+
+
+[.description]
+--
+Specifies whether to use Spnego or Kerberos OID.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_USE_SPNEGO_OID+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_USE_SPNEGO_OID+++`
+endif::add-copy-button-to-env-var[]
+--|boolean 
+|`true`
+
+
+a|icon:lock[title=Fixed at build time] [[quarkus-kerberos_quarkus-kerberos-devservices-principals-principals]]`link:#quarkus-kerberos_quarkus-kerberos-devservices-principals-principals[quarkus.kerberos.devservices.principals."principals"]`
+
+
+[.description]
+--
+The Kerberos user principals map containing the principal name and password pairs. If this map is empty then two principals, 'alice' and 'bob' with the passwords matching their names will be created.
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_KERBEROS_DEVSERVICES_PRINCIPALS__PRINCIPALS_+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_KERBEROS_DEVSERVICES_PRINCIPALS__PRINCIPALS_+++`
+endif::add-copy-button-to-env-var[]
+--|link:https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[String]
+ 
+|
+
+|===

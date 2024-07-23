@@ -1,5 +1,5 @@
 name: Quarkus Kerberos
 release:
-  current-version: 2.2.0
+  current-version: 2.1.0
   next-version: 999-SNAPSHOT
 

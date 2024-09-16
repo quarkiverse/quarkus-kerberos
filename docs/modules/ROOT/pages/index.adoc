@@ -82,11 +82,11 @@ If you haven't created a keytab just yet then you can register a custom callback
 ```java
 import jakarta.enterprise.context.ApplicationScoped;
 
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
+import jakarta.security.auth.callback.Callback;
+import jakarta.security.auth.callback.CallbackHandler;
+import jakarta.security.auth.callback.NameCallback;
+import jakarta.security.auth.callback.PasswordCallback;
+import jakarta.security.auth.callback.UnsupportedCallbackException;
 
 import io.quarkiverse.kerberos.KerberosCallbackHandler;
 
@@ -118,7 +118,7 @@ public class UsernamePasswordCallbackHandler implements KerberosCallbackHandler 
 }
 ```
 
-Note `io.quarkiverse.kerberos.KerberosCallbackHandler` extends `javax.security.auth.callback.Callback` - it only acts as a marker interface for this extension to avoid having unrelated CallbackHandlers injected.
+Note `io.quarkiverse.kerberos.KerberosCallbackHandler` extends `jakarta.security.auth.callback.Callback` - it only acts as a marker interface for this extension to avoid having unrelated CallbackHandlers injected.
 
 The service principal name itself is calculated from the current HTTP `Host` header, for example, given `Host: localhost:8080` the name will be calculated as `HTTP/localhost`.
 If necessay it can be customized with `quarkus.kerberos.service-principal-name`.
@@ -169,13 +169,13 @@ However, if you have an existing JAAS Login Configuration then set `quarkus.kerb
 
 == Service Principal Subject Customization
 
-The extension will use `javax.security.auth.login.LoginContext` to create a `Subject` representing a service principal, using the auto-generated or external JAAS Login Configuration as well as the registered callback unless a keytab is used.
+The extension will use `jakarta.security.auth.login.LoginContext` to create a `Subject` representing a service principal, using the auto-generated or external JAAS Login Configuration as well as the registered callback unless a keytab is used.
 
 You can customize this process by registering a custom `io.quarkiverse.kerberos.ServicePrincipalSubjectFactory`:
 
 ```java
 import jakarta.enterprise.context.ApplicationScoped;
-import javax.security.auth.Subject;
+import jakarta.security.auth.Subject;
 import io.quarkiverse.kerberos.ServicePrincipalSubjectFactory;
 
 @ApplicationScoped
@@ -513,7 +513,7 @@ import java.security.PrivilegedExceptionAction;
 import java.util.Base64;
 
 import jakarta.inject.Inject;
-import javax.security.auth.Subject;
+import jakarta.security.auth.Subject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotAuthorizedException;
 import jakarta.ws.rs.Path;

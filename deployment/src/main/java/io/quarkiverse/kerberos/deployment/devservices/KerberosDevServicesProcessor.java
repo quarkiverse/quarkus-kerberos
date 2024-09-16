@@ -78,7 +78,7 @@ public class KerberosDevServicesProcessor {
             LaunchModeBuildItem launchMode,
             LoggingSetupBuildItem loggingSetupBuildItem) {
 
-        DevServicesConfig currentDevServicesConfiguration = config.devservices;
+        DevServicesConfig currentDevServicesConfiguration = config.devservices();
         // Figure out if we need to shut down and restart any existing Kerberos container
         // if not and the Kerberos container has already started we just return
         boolean restartRequired = !currentDevServicesConfiguration.equals(capturedDevServicesConfiguration);
@@ -153,7 +153,7 @@ public class KerberosDevServicesProcessor {
     }
 
     private StartResult startContainer(boolean useSharedContainer, boolean restart) {
-        if (!capturedDevServicesConfiguration.enabled) {
+        if (!capturedDevServicesConfiguration.enabled()) {
             // explicitly disabled
             LOG.debug("Not starting Dev Services for Kerberos as it has been disabled in the config");
             return null;
@@ -177,19 +177,19 @@ public class KerberosDevServicesProcessor {
         }
 
         final Optional<ContainerAddress> maybeContainerAddress = kerberosDevModeContainerLocator.locateContainer(
-                capturedDevServicesConfiguration.serviceName,
-                capturedDevServicesConfiguration.shared,
+                capturedDevServicesConfiguration.serviceName(),
+                capturedDevServicesConfiguration.shared(),
                 LaunchMode.current());
 
         final Supplier<StartResult> defaultKerberosContainerSupplier = () -> {
-            String imageName = capturedDevServicesConfiguration.imageName;
+            String imageName = capturedDevServicesConfiguration.imageName();
             DockerImageName dockerImageName = DockerImageName.parse(imageName)
                     .asCompatibleSubstituteFor(imageName);
             QuarkusKerberosContainer kerberosContainer = new QuarkusKerberosContainer(dockerImageName,
                     useSharedContainer,
-                    capturedDevServicesConfiguration.serviceName,
-                    capturedDevServicesConfiguration.shared,
-                    capturedDevServicesConfiguration.javaOpts);
+                    capturedDevServicesConfiguration.serviceName(),
+                    capturedDevServicesConfiguration.shared(),
+                    capturedDevServicesConfiguration.javaOpts());
 
             kerberosContainer.start();
             LOG.info(kerberosContainer.getLogs());
@@ -214,20 +214,20 @@ public class KerberosDevServicesProcessor {
     }
 
     private Map<String, String> getUserPrincipals() {
-        if (capturedDevServicesConfiguration.principals.isEmpty()) {
+        if (capturedDevServicesConfiguration.principals().isEmpty()) {
             Map<String, String> users = new LinkedHashMap<String, String>();
             users.put("alice", "alice");
             users.put("bob", "bob");
             return users;
         } else {
-            return capturedDevServicesConfiguration.principals;
+            return capturedDevServicesConfiguration.principals();
         }
     }
 
     private static String getSharedKrb5CfgPath(ContainerAddress sharedKerberos) {
         Optional<ContainerAddress> sharedKerberosAdmin = kerberosDevModeAdminServerContainerLocator.locateContainer(
-                capturedDevServicesConfiguration.serviceName,
-                capturedDevServicesConfiguration.shared,
+                capturedDevServicesConfiguration.serviceName(),
+                capturedDevServicesConfiguration.shared(),
                 LaunchMode.current());
         return createKrb5Config("0.0.0.0".equals(sharedKerberos.getHost()) ? "localhost" : sharedKerberos.getHost(),
                 String.valueOf(sharedKerberos.getPort()),
@@ -342,8 +342,8 @@ public class KerberosDevServicesProcessor {
     }
 
     private static String getRealm() {
-        if (capturedDevServicesConfiguration.realm.isPresent()) {
-            return capturedDevServicesConfiguration.realm.get();
+        if (capturedDevServicesConfiguration.realm().isPresent()) {
+            return capturedDevServicesConfiguration.realm().get();
         }
         return ConfigProvider.getConfig().getOptionalValue(KERBEROS_SERVICE_PRINC_REALM_PROP, String.class)
                 .orElse(DEFAULT_KERBEROS_SERVICE_PRINC_REALM);

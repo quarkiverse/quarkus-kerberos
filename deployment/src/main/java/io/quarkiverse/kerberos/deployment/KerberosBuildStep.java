@@ -77,7 +77,7 @@ public class KerberosBuildStep {
         KerberosBuildTimeConfig config;
 
         public boolean getAsBoolean() {
-            return config.enabled;
+            return config.enabled();
         }
     }
 }

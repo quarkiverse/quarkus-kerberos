@@ -32,7 +32,6 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.DevServicesConfigResultBuildItem;
 import io.quarkus.deployment.builditem.DevServicesSharedNetworkBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
-import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
 import io.quarkus.devservices.common.ContainerAddress;
 import io.quarkus.devservices.common.ContainerLocator;
@@ -70,7 +69,8 @@ public class KerberosDevServicesProcessor {
     private static volatile DevServicesConfig capturedDevServicesConfiguration;
     private static volatile KerberosDevServicesConfigBuildItem existingDevServiceConfig;
 
-    @BuildStep(onlyIfNot = IsNormal.class, onlyIf = { IsEnabled.class, GlobalDevServicesConfig.Enabled.class })
+    @BuildStep(onlyIfNot = IsNormal.class, onlyIf = { IsEnabled.class,
+            io.quarkus.deployment.dev.devservices.DevServicesConfig.Enabled.class })
     public KerberosDevServicesConfigBuildItem startKerberosContainer(
             List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
             BuildProducer<DevServicesConfigResultBuildItem> devServices,

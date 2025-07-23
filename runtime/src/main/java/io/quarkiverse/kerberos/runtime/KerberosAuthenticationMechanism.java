@@ -71,8 +71,8 @@ public class KerberosAuthenticationMechanism implements HttpAuthenticationMechan
     }
 
     @Override
-    public HttpCredentialTransport getCredentialTransport() {
-        return new HttpCredentialTransport(HttpCredentialTransport.Type.AUTHORIZATION, NEGOTIATE_SCHEME);
+    public Uni<HttpCredentialTransport> getCredentialTransport(RoutingContext context) {
+        return Uni.createFrom().item(new HttpCredentialTransport(HttpCredentialTransport.Type.AUTHORIZATION, NEGOTIATE_SCHEME));
     }
 
     private String extractNegotiateToken(RoutingContext context) {

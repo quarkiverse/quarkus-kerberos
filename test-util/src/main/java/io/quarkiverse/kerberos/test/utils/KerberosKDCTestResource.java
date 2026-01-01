@@ -55,6 +55,7 @@ import org.apache.directory.server.core.factory.DefaultDirectoryServiceFactory;
 import org.apache.directory.server.core.factory.DirectoryServiceFactory;
 import org.apache.directory.server.core.factory.PartitionFactory;
 import org.apache.directory.server.core.kerberos.KeyDerivationInterceptor;
+import org.apache.directory.server.core.shared.DefaultDnFactory;
 import org.apache.directory.server.kerberos.KerberosConfig;
 import org.apache.directory.server.kerberos.kdc.KdcServer;
 import org.apache.directory.server.ldap.LdapServer;
@@ -123,7 +124,9 @@ public class KerberosKDCTestResource implements QuarkusTestResourceLifecycleMana
     private static void createPartition(final DirectoryServiceFactory dsf, final SchemaManager schemaManager, final String id,
             final String suffix) throws Exception {
         PartitionFactory pf = dsf.getPartitionFactory();
-        Partition p = pf.createPartition(schemaManager, id, suffix, 1000, workingDir.toFile());
+        //new row
+        DefaultDnFactory factory = new DefaultDnFactory(schemaManager, null);
+        Partition p = pf.createPartition(schemaManager, factory, id, suffix, 1000, workingDir.toFile());
         pf.addIndex(p, "krb5PrincipalName", 10);
         p.initialize();
         directoryService.addPartition(p);

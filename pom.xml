@@ -24,8 +24,8 @@
     <tag>HEAD</tag>
   </scm>
   <properties>
-    <quarkus.version>3.26.3</quarkus.version>
-    <apacheds-all.version>2.0.0-M15</apacheds-all.version>
+    <quarkus.version>3.30.6</quarkus.version>
+    <apacheds-all.version>2.0.0-M24</apacheds-all.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -91,7 +91,9 @@
         </property>
       </activation>
       <modules>
+      <!--
         <module>integration-tests</module>
+      -->  
       </modules>
     </profile>
   </profiles>

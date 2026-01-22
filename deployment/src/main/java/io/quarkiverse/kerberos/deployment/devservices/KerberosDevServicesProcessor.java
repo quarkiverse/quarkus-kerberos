@@ -29,7 +29,7 @@ import io.quarkus.deployment.IsDockerWorking;
 import io.quarkus.deployment.IsNormal;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
-import io.quarkus.deployment.builditem.DevServicesConfigResultBuildItem;
+import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
 import io.quarkus.deployment.builditem.DevServicesSharedNetworkBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.logging.LoggingSetupBuildItem;
@@ -73,7 +73,7 @@ public class KerberosDevServicesProcessor {
             io.quarkus.deployment.dev.devservices.DevServicesConfig.Enabled.class })
     public KerberosDevServicesConfigBuildItem startKerberosContainer(
             List<DevServicesSharedNetworkBuildItem> devServicesSharedNetworkBuildItem,
-            BuildProducer<DevServicesConfigResultBuildItem> devServices,
+            BuildProducer<DevServicesResultBuildItem> devServices,
             KerberosBuildTimeConfig config,
             LaunchModeBuildItem launchMode,
             LoggingSetupBuildItem loggingSetupBuildItem) {
@@ -136,17 +136,17 @@ public class KerberosDevServicesProcessor {
         }
         LOG.info("Dev Services for Kerberos started.");
 
-        return prepareConfiguration(devServices, startResult.krb5CfgPath, startResult.shared);
+        return prepareConfiguration(devServices, config.devservices().serviceName(), startResult);
     }
 
-    private KerberosDevServicesConfigBuildItem prepareConfiguration(BuildProducer<DevServicesConfigResultBuildItem> devServices,
-            String krb5CfgPath,
-            boolean shared) {
+    private KerberosDevServicesConfigBuildItem prepareConfiguration(BuildProducer<DevServicesResultBuildItem> devServices,
+            String serviceName, StartResult startResult) {
 
-        System.setProperty("java.security.krb5.conf", krb5CfgPath);
+        System.setProperty("java.security.krb5.conf", startResult.krb5CfgPath);
 
+        Map<String, String> principalProps = Map.of(KERBEROS_SERVICE_PRINC_PWD_PROP, getServicePrincipalPassword());
         devServices
-                .produce(new DevServicesConfigResultBuildItem(KERBEROS_SERVICE_PRINC_PWD_PROP, getServicePrincipalPassword()));
+                .produce(new DevServicesResultBuildItem(serviceName, startResult.containerId, principalProps));
 
         existingDevServiceConfig = new KerberosDevServicesConfigBuildItem(Collections.emptyMap());
         return existingDevServiceConfig;
@@ -204,12 +204,14 @@ public class KerberosDevServicesProcessor {
                     LOG.info("Dev Services for Kerberos shut down.");
                 }
             },
+                    kerberosContainer.getContainerId(),
                     krb5CfgPath,
                     false);
         };
 
         return maybeContainerAddress
-                .map(containerAddress -> new StartResult(null, getSharedKrb5CfgPath(containerAddress), true))
+                .map(containerAddress -> new StartResult(null, containerAddress.getId(), getSharedKrb5CfgPath(containerAddress),
+                        true))
                 .orElseGet(defaultKerberosContainerSupplier);
     }
 
@@ -259,11 +261,13 @@ public class KerberosDevServicesProcessor {
 
     private static class StartResult {
         private final Closeable closeable;
+        private final String containerId;
         private final String krb5CfgPath;
         private final boolean shared;
 
-        public StartResult(Closeable closeable, String krb5CfgPath, boolean shared) {
+        public StartResult(Closeable closeable, String containerId, String krb5CfgPath, boolean shared) {
             this.closeable = closeable;
+            this.containerId = containerId;
             this.krb5CfgPath = krb5CfgPath;
             this.shared = shared;
         }

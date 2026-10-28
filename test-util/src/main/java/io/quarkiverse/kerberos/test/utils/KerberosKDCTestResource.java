@@ -128,6 +128,7 @@ public class KerberosKDCTestResource implements QuarkusTestResourceLifecycleMana
         DefaultDnFactory factory = new DefaultDnFactory(schemaManager, null);
         Partition p = pf.createPartition(schemaManager, factory, id, suffix, 1000, workingDir.toFile());
         pf.addIndex(p, "krb5PrincipalName", 10);
+        p.setCacheService(directoryService.getCacheService());
         p.initialize();
         directoryService.addPartition(p);
     }

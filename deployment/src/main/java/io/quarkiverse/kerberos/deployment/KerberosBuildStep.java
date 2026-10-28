@@ -1,5 +1,6 @@
 package io.quarkiverse.kerberos.deployment;
 
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import io.quarkiverse.kerberos.runtime.KerberosAuthenticationMechanism;
@@ -61,8 +62,14 @@ public class KerberosBuildStep {
     }
 
     @BuildStep(onlyIf = IsEnabled.class)
-    public NativeImageResourceBundleBuildItem resourceBundleBuildItem() {
-        return new NativeImageResourceBundleBuildItem("sun.security.util.AuthResources");
+    public List<NativeImageResourceBundleBuildItem> resourceBundleBuildItem() {
+        return List.of(
+                // JDK 17 and 21
+                new NativeImageResourceBundleBuildItem("sun.security.util.AuthResources"),
+                new NativeImageResourceBundleBuildItem("sun.security.util.Resources"),
+                // JDK 25
+                new NativeImageResourceBundleBuildItem("sun.security.util.resources.auth"),
+                new NativeImageResourceBundleBuildItem("sun.security.util.resources.security"));
     }
 
     @BuildStep(onlyIf = IsEnabled.class)

@@ -91,9 +91,7 @@
         </property>
       </activation>
       <modules>
-      <!--
         <module>integration-tests</module>
-      -->  
       </modules>
     </profile>
   </profiles>

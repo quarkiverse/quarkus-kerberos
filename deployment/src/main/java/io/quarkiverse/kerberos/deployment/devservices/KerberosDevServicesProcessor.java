@@ -19,6 +19,7 @@ import org.jboss.logging.Logger;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.containers.wait.strategy.WaitAllStrategy;
 import org.testcontainers.utility.Base58;
 import org.testcontainers.utility.DockerImageName;
 
@@ -305,11 +306,13 @@ public class KerberosDevServicesProcessor {
                 withExposedPorts(KERBEROS_KDC_PORT, KERBEROS_KDC_PORT_2, KERBEROS_ADMIN_SERVER_PORT);
             }
 
-            withStartupTimeout(Duration.ofMillis(20000));
             withEnv("KRB5_REALM", getRealm());
             withEnv("KRB5_KDC", "localhost");
             withEnv("KRB5_PASS", "mypass");
-            waitingFor(Wait.forLogMessage(".* running without any HTTP authentication checking.*", 1));
+            waitingFor(new WaitAllStrategy()
+                    .withStrategy(Wait.forLogMessage(".* running without any HTTP authentication checking.*", 1))
+                    .withStrategy(Wait.forListeningPorts(KERBEROS_KDC_PORT))
+                    .withStartupTimeout(Duration.ofMillis(20000)));
 
             if (javaOpts.isPresent()) {
                 addEnv(JAVA_OPTS, javaOpts.get());

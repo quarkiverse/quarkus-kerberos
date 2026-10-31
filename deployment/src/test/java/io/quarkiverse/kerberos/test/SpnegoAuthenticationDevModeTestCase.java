@@ -1,5 +1,7 @@
 package io.quarkiverse.kerberos.test;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.hamcrest.Matchers;
@@ -29,7 +31,7 @@ public class SpnegoAuthenticationDevModeTestCase {
     KerberosTestClient kerberosTestClient = new KerberosTestClient();
 
     @Test
-    public void testSpnegoSuccess() throws Exception {
+    void testSpnegoSuccess() {
 
         var header = RestAssured.get("/identity")
                 .then().statusCode(401)
@@ -44,5 +46,27 @@ public class SpnegoAuthenticationDevModeTestCase {
 
         result = kerberosTestClient.get("/identity", "alice", "alice");
         result.statusCode(200).body(Matchers.is("alice"));
+    }
+
+    @Test
+    void testSpnegoSuccessWithDevServicesRestart() {
+
+        var header = RestAssured.get("/identity")
+                .then().statusCode(401)
+                .extract()
+                .header(HttpHeaderNames.WWW_AUTHENTICATE.toString());
+        assertEquals(NEGOTIATE, header);
+
+        kerberosTestClient.get("/identity", "alice", "alice").statusCode(401);
+
+        test.modifyResourceFile("application.properties",
+                s -> s.replace("quarkus.kerberos.devservices.realm=QUARKUS.IO",
+                        "quarkus.kerberos.devservices.realm=QUARKUSDEV.IO"));
+
+        await().atMost(30, SECONDS)
+                .pollInterval(1, SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> kerberosTestClient.get("/identity", "alice", "alice")
+                        .statusCode(200).body(Matchers.is("alice")));
     }
 }

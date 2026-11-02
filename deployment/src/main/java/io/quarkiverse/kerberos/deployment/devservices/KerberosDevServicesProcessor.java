@@ -86,7 +86,7 @@ public class KerberosDevServicesProcessor {
         if (!restartRequired) {
             return existingDevServiceConfig;
         }
-        ;
+
         if (closeables != null) {
             for (Closeable closeable : closeables) {
                 try {

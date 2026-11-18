@@ -30,7 +30,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.quarkiverse.kerberos.test.utils.KerberosTestClient;
-import io.quarkus.test.QuarkusUnitTest;
+import io.quarkus.test.QuarkusExtensionTest;
 import io.restassured.RestAssured;
 
 /**
@@ -40,7 +40,7 @@ public class SpnegoAuthenticationTestCase {
     public static final String NEGOTIATE = "Negotiate";
 
     @RegisterExtension
-    static QuarkusUnitTest quarkusUnitTest = new QuarkusUnitTest()
+    static QuarkusExtensionTest quarkusUnitTest = new QuarkusExtensionTest()
             .setArchiveProducer(new Supplier<JavaArchive>() {
                 @Override
                 public JavaArchive get() {

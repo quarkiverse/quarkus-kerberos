@@ -49,6 +49,7 @@ import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.runtime.QuarkusSecurityIdentity;
 import io.quarkus.vertx.http.runtime.security.HttpSecurityUtils;
 import io.smallrye.mutiny.Uni;
+import io.vertx.core.net.HostAndPort;
 import io.vertx.ext.web.RoutingContext;
 
 @Singleton
@@ -223,8 +224,9 @@ public class KerberosIdentityProvider implements IdentityProvider<NegotiateAuthe
     }
 
     protected String getCompleteServicePrincipalName(RoutingContext routingContext) {
+        HostAndPort authority = routingContext.request().authority();
         String name = kerberosConfig.servicePrincipalName().isEmpty()
-                ? "HTTP/" + routingContext.request().host()
+                ? "HTTP/" + (authority != null ? authority.host() : null)
                 : kerberosConfig.servicePrincipalName().get();
         int portIndex = name.indexOf(":");
         if (portIndex > 0) {

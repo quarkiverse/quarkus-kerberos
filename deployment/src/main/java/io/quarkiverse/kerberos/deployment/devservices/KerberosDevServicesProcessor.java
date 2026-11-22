@@ -146,8 +146,11 @@ public class KerberosDevServicesProcessor {
         System.setProperty("java.security.krb5.conf", startResult.krb5CfgPath);
 
         Map<String, String> principalProps = Map.of(KERBEROS_SERVICE_PRINC_PWD_PROP, getServicePrincipalPassword());
-        devServices
-                .produce(new DevServicesResultBuildItem(serviceName, startResult.containerId, principalProps));
+        devServices.produce(DevServicesResultBuildItem.discovered()
+                .name(serviceName)
+                .containerId(startResult.containerId)
+                .config(principalProps)
+                .build());
 
         existingDevServiceConfig = new KerberosDevServicesConfigBuildItem(Collections.emptyMap());
         return existingDevServiceConfig;
